@@ -5,6 +5,8 @@ import { ScratchCursor } from "@/components/ScratchCursor";
 import { BlockBuilder } from "@/components/BlockBuilder";
 import { AmbientCreatures } from "@/components/AmbientCreatures";
 import { BuildModeLauncher } from "@/components/BuildModeLauncher";
+import { StructuredData } from "@/components/StructuredData";
+import { SITE_URL, SITE_NAME } from "@/lib/site";
 
 // Swiss neo-grotesque display face (Helvetica/Neue Haas family) for headings.
 const grotesk = Hanken_Grotesk({
@@ -29,34 +31,73 @@ const inter = Inter({
   display: "swap",
 });
 
-const SITE_URL = "https://arkitkarmokar.com";
+const TITLE = "Arkit Karmokar — Full Stack Developer";
+const DESCRIPTION =
+  "Arkit Karmokar is a Full Stack Developer from India building SaaS platforms and distributed systems with Next.js, TypeScript, Python/Django and PostgreSQL — with deep work in AI/RAG systems, LLM integration and system design.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Arkit Karmokar — Full Stack Developer",
-  description:
-    "Full Stack Developer building SaaS platforms and distributed systems. I build software that feels effortless.",
+  title: {
+    default: TITLE,
+    template: "%s — Arkit Karmokar",
+  },
+  description: DESCRIPTION,
+  applicationName: SITE_NAME,
   keywords: [
     "Arkit Karmokar",
     "Full Stack Developer",
     "AI Engineer",
-    "Next.js",
+    "Software Engineer India",
+    "Next.js Developer",
+    "TypeScript",
+    "Python Django",
+    "PostgreSQL",
+    "RAG",
+    "LLM Integration",
+    "System Design",
     "SaaS",
     "Distributed Systems",
   ],
-  authors: [{ name: "Arkit Karmokar" }],
+  authors: [{ name: "Arkit Karmokar", url: SITE_URL }],
+  creator: "Arkit Karmokar",
+  publisher: "Arkit Karmokar",
+  alternates: {
+    canonical: "/",
+  },
+  category: "technology",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   openGraph: {
-    title: "Arkit Karmokar — Full Stack Developer",
-    description: "I build software that feels effortless.",
+    type: "profile",
     url: SITE_URL,
-    siteName: "Arkit Karmokar",
-    images: [{ url: "/og.jpg", width: 1200, height: 800 }],
-    type: "website",
+    siteName: SITE_NAME,
+    title: TITLE,
+    description: DESCRIPTION,
+    locale: "en_US",
+    images: [
+      {
+        url: "/og.jpg",
+        width: 1200,
+        height: 800,
+        alt: "Arkit Karmokar — Full Stack Developer",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Arkit Karmokar — Full Stack Developer",
-    description: "I build software that feels effortless.",
+    site: "@arkit_k",
+    creator: "@arkit_k",
+    title: TITLE,
+    description: DESCRIPTION,
     images: ["/og.jpg"],
   },
 };
@@ -76,6 +117,7 @@ export default function RootLayout({
       className={`${grotesk.variable} ${instrument.variable} ${inter.variable}`}
     >
       <body className="font-sans antialiased bg-cream text-charcoal">
+        <StructuredData />
         <AmbientCreatures />
         <div className="relative z-10" data-content>
           {children}

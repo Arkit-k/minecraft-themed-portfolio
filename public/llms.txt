@@ -1,0 +1,37 @@
+# Arkit Karmokar
+
+> Arkit Karmokar is a Full Stack Developer from Ulhasnagar, Maharashtra, India, building SaaS platforms and distributed systems. He specializes in Next.js, TypeScript, Python/Django and PostgreSQL, with deep work in AI/RAG systems, LLM integration, and high-throughput infrastructure. Tagline: "I build software that feels effortless."
+
+## About
+
+Full Stack Developer specializing in SaaS platforms and distributed systems — from automation platforms that resolve direct business friction to high-throughput internal infrastructure. Focused on shipping high-impact tools that perform smoothly under load and adapt within modern enterprise ecosystems. Also works as a Developer, Builder, Designer, and AI Engineer.
+
+## Skills
+
+- Languages & frameworks: JavaScript, TypeScript, Python, HTML/CSS, React.js & Next.js, Node.js & Express.js, Bun.js & Hono.js, Django
+- Data & infra: PostgreSQL & MongoDB, Docker, AWS, Redis & Celery
+- Systems & AI: System Design, RAG Architecture, LLM Integration, Churn Mitigation, HRMS Infrastructure, Agile Sprints
+
+## Experience
+
+- Optiminastic — Full Stack Developer (Feb 2026 – Present, Remote): Built an enterprise internal HR Management Platform (recruitment workflows, candidate tracking, automated onboarding). Engineered a full-stack SaaS engine monitoring website visibility across multi-model AI search (ChatGPT, Perplexity, Gemini) with Shopify Remix Apps and WordPress Plugins. Analytics pipeline in Python/Django and Next.js with Celery and PostgreSQL.
+- Cinemate AI — Founding Engineer / Consultant (Sept 2025 – Jan 2026, Mumbai): Co-designed a filmmaking discovery platform. Built high-performance Next.js backend with SSR, optimized PostgreSQL schemas and connection pooling, and operational RAG pipelines using LangChain for document embeddings and real-time vector indexing.
+
+## Projects
+
+- Shepherd — Production-readiness auditing tool that catches the failure modes AI code generators leave behind (missing auth, cost-bombs, outdated patterns), with deterministic security/architecture scans and Claude Code/MCP integration. https://github.com/Arkit-k/shepherd
+- WindbackAI — B2B retention platform that minimizes subscription churn and recovers failed-transaction revenue using autonomous AI win-back sequences; PII encryption, RBAC, Redis queues, Docker on Render.
+- BrowzyAI — Browser extension enhancing navigation with companion tools; JavaScript extension layers on Python systems via Gemini API with native NLU.
+- 100xdevs Ecosystem — Production framework across Next.js (TypeScript), PostgreSQL, Docker, AWS, and Web3/Solana.
+
+## Education
+
+- University of Mumbai — B.Sc. in Information Technology (Apr 2021 – May 2024). Coursework: Data Structures, Algorithms, Computer Systems, Software Engineering, Database Systems.
+
+## Contact & Links
+
+- Website: https://arkitkarmokar.com
+- GitHub: https://github.com/arkit-k
+- LinkedIn: https://linkedin.com/in/arkit
+- X/Twitter: https://x.com/arkit_k
+- Email: arkitkarmokar007@gmail.com

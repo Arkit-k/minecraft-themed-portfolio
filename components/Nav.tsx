@@ -63,9 +63,9 @@ export function Nav() {
           animate={{ opacity: 1, y: 0 }}
           exit={reduce ? { opacity: 0 } : { opacity: 0, y: -12 }}
           transition={{ duration: 0.6, ease: EASE }}
-          className="fixed left-1/2 top-5 z-40 -translate-x-1/2"
+          className="fixed left-1/2 top-4 z-40 w-auto max-w-[calc(100vw-1rem)] -translate-x-1/2 sm:top-5"
         >
-          <ul className="flex items-center gap-0.5 rounded-full border border-hairline bg-cream/85 px-1.5 py-1.5 shadow-[0_1px_20px_rgba(34,34,34,0.05)] backdrop-blur-md sm:gap-2 sm:px-3">
+          <ul className="no-scrollbar flex flex-nowrap items-center gap-0.5 overflow-x-auto rounded-full border border-hairline bg-cream/85 px-1.5 py-1.5 shadow-[0_1px_20px_rgba(34,34,34,0.05)] backdrop-blur-md sm:gap-2 sm:px-3">
             {SECTIONS.map(({ id, label }) => {
               const isActive = active === id;
               return (
@@ -73,7 +73,7 @@ export function Nav() {
                   <a
                     href={`#${id}`}
                     onClick={(e) => handleClick(e, id)}
-                    className="relative block rounded-full px-2.5 py-1.5 text-[12px] tracking-tight text-gray-soft transition-colors duration-300 hover:text-charcoal sm:px-3 sm:text-sm"
+                    className="relative block shrink-0 whitespace-nowrap rounded-full px-2.5 py-1.5 text-[12px] tracking-tight text-gray-soft transition-colors duration-300 hover:text-charcoal sm:px-3 sm:text-sm"
                   >
                     {isActive && (
                       <motion.span
