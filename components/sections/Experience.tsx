@@ -13,7 +13,7 @@ export function Experience() {
       <div className="border-t border-hairline">
         {experience.map((job) => (
           <Reveal key={job.company}>
-            <article className="grid gap-x-10 gap-y-4 border-b border-hairline py-10 sm:py-14 lg:grid-cols-[0.4fr_0.6fr]">
+            <article className="grid gap-y-4 border-b border-hairline py-10 sm:py-12">
               <div>
                 <h3 className="font-serif text-2xl tracking-tight text-charcoal sm:text-3xl">
                   {job.company}

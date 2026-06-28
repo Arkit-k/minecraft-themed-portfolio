@@ -1,40 +1,17 @@
 "use client";
 
-import dynamic from "next/dynamic";
+import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { profile } from "@/lib/content";
 
-const ParticleHero = dynamic(
-  () => import("@/components/ParticleHero").then((m) => m.ParticleHero),
-  { ssr: false }
-);
-
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-function RevealWord({ text, delay = 0 }: { text: string; delay?: number }) {
-  const reduce = useReducedMotion();
-  if (reduce) return <span>{text}</span>;
-  const letters = Array.from(text);
-  return (
-    <span className="inline-block whitespace-nowrap">
-      {letters.map((ch, i) => (
-        <motion.span
-          key={i}
-          className="inline-block"
-          initial={{ opacity: 0, y: "0.5em", filter: "blur(6px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{
-            duration: 1,
-            ease: EASE,
-            delay: delay + i * 0.035,
-          }}
-        >
-          {ch === " " ? " " : ch}
-        </motion.span>
-      ))}
-    </span>
-  );
-}
+const socials = [
+  { label: "Email", href: `mailto:${profile.email}` },
+  { label: "LinkedIn", href: profile.linkedin },
+  { label: "GitHub", href: profile.github },
+  { label: "Twitter", href: profile.twitter },
+];
 
 export function Hero() {
   const reduce = useReducedMotion();
@@ -44,67 +21,61 @@ export function Hero() {
       id="top"
       className="relative mx-auto flex min-h-[100svh] w-full max-w-editorial flex-col justify-center px-6 pt-28 pb-20 sm:px-10 lg:px-16"
     >
-      <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
-        {/* Text column */}
-        <div className="order-2 lg:order-1">
-          <motion.p
-            initial={reduce ? false : { opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: EASE, delay: 0.1 }}
-            className="mb-6 flex items-center gap-3 text-xs uppercase tracking-[0.28em] text-gray-soft"
-          >
-            <span className="h-px w-8 bg-charcoal/30" />
-            {profile.role}
-          </motion.p>
-
-          <h1 className="font-instrument text-[clamp(3.2rem,9vw,7rem)] leading-[0.95] tracking-tightest text-charcoal">
-            <RevealWord text="Arkit" delay={0.15} />
-            <br />
-            <span className="italic text-graphite">
-              <RevealWord text="Karmokar" delay={0.4} />
-            </span>
-          </h1>
-
-          <motion.p
-            initial={reduce ? false : { opacity: 0, y: 16, filter: "blur(6px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 1.1, ease: EASE, delay: 0.9 }}
-            className="mt-8 max-w-md text-pretty text-lg leading-relaxed text-gray-soft sm:text-xl"
-          >
-            {profile.philosophy}
-          </motion.p>
-
-          <motion.div
-            initial={reduce ? false : { opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.1, ease: EASE, delay: 1.1 }}
-            className="mt-10 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-charcoal/80"
-          >
-            {profile.roles.map((r, i) => (
-              <span key={r} className="flex items-center gap-3">
-                {i > 0 && <span className="h-1 w-1 rounded-full bg-charcoal/25" />}
-                <span className="tracking-tight">{r}</span>
-              </span>
-            ))}
-          </motion.div>
+      <motion.div
+        initial={reduce ? false : { opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: EASE }}
+        className="mx-auto flex w-full flex-col items-center text-center"
+      >
+        {/* avatar */}
+        <div className="relative h-28 w-28 overflow-hidden rounded-full shadow-sm ring-1 ring-charcoal/10 sm:h-32 sm:w-32">
+          <Image
+            src="/avatar.jpg"
+            alt={profile.name}
+            fill
+            sizes="128px"
+            className="object-cover"
+            priority
+          />
         </div>
 
-        {/* Artwork column */}
-        <motion.div
-          initial={reduce ? false : { opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.6, ease: EASE, delay: 0.5 }}
-          className="order-1 lg:order-2"
-        >
-          <ParticleHero className="mx-auto aspect-[3/2] w-full max-w-[560px] lg:max-w-none" />
-        </motion.div>
-      </div>
+        {/* name */}
+        <h1 className="mt-8 font-instrument text-[clamp(2.8rem,8vw,5rem)] leading-[1.0] tracking-tightest text-charcoal">
+          Arkit <span className="italic text-graphite">Karmokar</span>
+        </h1>
+
+        {/* role */}
+        <p className="mt-3 text-lg text-gray-soft sm:text-xl">{profile.role}</p>
+
+        {/* inline social links — Email / LinkedIn / GitHub / Twitter */}
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 text-sm text-gray-soft">
+          {socials.map((s, i) => (
+            <span key={s.label} className="flex items-center gap-2.5">
+              {i > 0 && <span className="text-charcoal/25">/</span>}
+              <a
+                href={s.href}
+                {...(s.href.startsWith("mailto")
+                  ? {}
+                  : { target: "_blank", rel: "noreferrer" })}
+                className="tracking-tight transition-colors duration-300 hover:text-charcoal"
+              >
+                {s.label}
+              </a>
+            </span>
+          ))}
+        </div>
+
+        {/* tagline */}
+        <p className="mt-8 max-w-md text-pretty text-lg leading-relaxed text-gray-soft">
+          {profile.philosophy}
+        </p>
+      </motion.div>
 
       {/* Scroll cue */}
       <motion.div
         initial={reduce ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1, ease: EASE, delay: 1.6 }}
+        transition={{ duration: 1, ease: EASE, delay: 1.2 }}
         className="pointer-events-none absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 text-gray-soft sm:flex"
       >
         <span className="text-[11px] uppercase tracking-[0.3em]">Scroll</span>

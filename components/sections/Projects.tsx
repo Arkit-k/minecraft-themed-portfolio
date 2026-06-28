@@ -30,7 +30,7 @@ export function Projects() {
             <motion.div
               whileHover={reduce ? undefined : { y: -4 }}
               transition={{ duration: 0.5, ease: EASE }}
-              className="grid gap-x-10 gap-y-5 py-10 sm:py-14 lg:grid-cols-[0.42fr_0.58fr]"
+              className="grid gap-y-5 py-10 sm:py-12"
             >
               {/* Left: identity */}
               <div>

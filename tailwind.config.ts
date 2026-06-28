@@ -29,7 +29,8 @@ const config: Config = {
         calm: "cubic-bezier(0.16, 1, 0.3, 1)",
       },
       maxWidth: {
-        editorial: "72rem",
+        // a centered single-column reading width (trending al-folio style)
+        editorial: "44rem",
       },
     },
   },
