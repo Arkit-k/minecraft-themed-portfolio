@@ -33,7 +33,7 @@ export function Hero() {
         initial={reduce ? false : { opacity: 0 }}
         animate={{ opacity: 0.5 }}
         transition={{ duration: 1.8, ease: EASE, delay: 0.4 }}
-        className="pointer-events-none absolute left-1/2 top-1/2 z-0 w-[130%] max-w-[920px] -translate-x-1/2 -translate-y-1/2"
+        className="pointer-events-none absolute left-1/2 top-1/2 z-0 w-full max-w-[920px] -translate-x-1/2 -translate-y-1/2 sm:w-[130%]"
       >
         <ParticleHero className="aspect-[3/2] w-full" />
       </motion.div>

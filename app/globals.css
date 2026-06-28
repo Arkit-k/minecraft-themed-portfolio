@@ -16,12 +16,14 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    overflow-x: clip; /* never allow horizontal scroll from decorative bleed */
   }
 
   body {
     background-color: var(--cream);
     color: var(--charcoal);
     font-feature-settings: "kern", "liga", "calt";
+    overflow-x: clip;
   }
 
   ::selection {
