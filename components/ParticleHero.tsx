@@ -259,15 +259,17 @@ export function ParticleHero({ className }: { className?: string }) {
     });
     ro.observe(wrap!);
 
-    wrap!.addEventListener("pointermove", onPointerMove);
-    wrap!.addEventListener("pointerleave", onPointerLeave);
+    // listen on window so the cursor effect works even when the artwork is a
+    // pointer-events-none backdrop (the element itself never gets the events)
+    window.addEventListener("pointermove", onPointerMove);
+    document.addEventListener("pointerleave", onPointerLeave);
 
     return () => {
       stop();
       io.disconnect();
       ro.disconnect();
-      wrap!.removeEventListener("pointermove", onPointerMove);
-      wrap!.removeEventListener("pointerleave", onPointerLeave);
+      window.removeEventListener("pointermove", onPointerMove);
+      document.removeEventListener("pointerleave", onPointerLeave);
     };
   }, []);
 
