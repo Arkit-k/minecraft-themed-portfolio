@@ -65,7 +65,8 @@ export async function addEdits(batch: Edit[]): Promise<number> {
     await r.hset(HASH_KEY, map);
     return batch.length;
   }
-  // file fallback: read-modify-write
+  // file fallback: read-modify-write. On a read-only host (e.g. Vercel without
+  // Redis) the write throws — swallow it so edits just don't persist, no 500.
   let obj: Record<string, number> = {};
   try {
     obj = JSON.parse(await fs.readFile(FILE, "utf8"));
@@ -73,7 +74,11 @@ export async function addEdits(batch: Edit[]): Promise<number> {
     /* first write */
   }
   Object.assign(obj, map);
-  await fs.writeFile(FILE, JSON.stringify(obj));
+  try {
+    await fs.writeFile(FILE, JSON.stringify(obj));
+  } catch {
+    /* read-only filesystem (no Redis configured) — accept non-persistence */
+  }
   return batch.length;
 }
 

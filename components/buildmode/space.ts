@@ -71,6 +71,7 @@ export class SpaceScene {
   private yaw = 0;
   private pitch = 0;
   private target: number | null = null;
+  private flyT = 0; // time since a destination was chosen
   private t = 0;
 
   constructor() {
@@ -165,7 +166,10 @@ export class SpaceScene {
   }
 
   selectPlanet(i: number) {
-    if (i >= 0 && i < this.planets.length) this.target = i;
+    if (i >= 0 && i < this.planets.length) {
+      this.target = i;
+      this.flyT = 0;
+    }
   }
 
   /** advance; returns the planet to land on once we've flown in */
@@ -181,12 +185,14 @@ export class SpaceScene {
     }
 
     // fly toward the chosen planet, looking at it
+    this.flyT += dt;
     const tp = this.planets[this.target];
     this.camera.lookAt(tp.mesh.position);
     const dir = tp.mesh.position.clone().sub(this.camera.position);
     const dist = dir.length();
     const stop = tp.radius + 6;
-    if (dist > stop) {
+    // land once we're close OR after a short flight (guaranteed arrival)
+    if (dist > stop && this.flyT < 1.5) {
       dir.normalize();
       this.camera.position.addScaledVector(dir, Math.min(dist - stop, dt * 95));
       return { arrived: false };
