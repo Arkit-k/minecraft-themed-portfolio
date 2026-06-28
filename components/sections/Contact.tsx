@@ -45,7 +45,7 @@ export function Contact() {
       </Reveal>
 
       <Reveal delay={0.1}>
-        <ul className="mt-16 grid gap-x-12 gap-y-8 sm:grid-cols-2">
+        <ul className="mt-12 grid gap-y-6">
           {links.map((l) => (
             <li key={l.label} className="border-t border-hairline pt-5">
               <a
@@ -57,7 +57,7 @@ export function Contact() {
                 <span className="block font-sans text-xs uppercase tracking-[0.2em] text-gray-soft">
                   {l.label}
                 </span>
-                <span className="mt-2 inline-flex items-center gap-2 font-serif text-2xl tracking-tight text-charcoal transition-colors duration-300 group-hover:text-graphite sm:text-3xl">
+                <span className="mt-2 inline-flex max-w-full items-center gap-2 break-all font-serif text-xl tracking-tight text-charcoal transition-colors duration-300 group-hover:text-graphite sm:text-2xl">
                   {l.display}
                   <span className="inline-block translate-y-px text-base opacity-0 transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-100">
                     →

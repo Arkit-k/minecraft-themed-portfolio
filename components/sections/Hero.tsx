@@ -1,8 +1,14 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { profile } from "@/lib/content";
+
+const ParticleHero = dynamic(
+  () => import("@/components/ParticleHero").then((m) => m.ParticleHero),
+  { ssr: false }
+);
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -69,6 +75,16 @@ export function Hero() {
         <p className="mt-8 max-w-md text-pretty text-lg leading-relaxed text-gray-soft">
           {profile.philosophy}
         </p>
+
+        {/* artwork */}
+        <motion.div
+          initial={reduce ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.6, ease: EASE, delay: 0.5 }}
+          className="mt-12 w-full"
+        >
+          <ParticleHero className="mx-auto aspect-[3/2] w-full max-w-[520px]" />
+        </motion.div>
       </motion.div>
 
       {/* Scroll cue */}
