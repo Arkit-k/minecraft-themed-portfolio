@@ -21,9 +21,8 @@ export function BlockBuilder() {
   const [hint, setHint] = useState(true);
 
   useEffect(() => {
-    const fine = window.matchMedia("(pointer: fine)").matches;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!fine || reduce) return;
+    if (reduce) return; // touch is supported (tap to place); only skip reduced-motion
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -89,10 +88,19 @@ export function BlockBuilder() {
     };
 
     let buildPaused = false;
+    // on touch we don't paint on drag (that would block scrolling) — a tap places
+    // a single block instead. mouse keeps the drag-to-build behaviour.
+    let touchStart: { x: number; y: number } | null = null;
+    let touchScrolled = false;
     const onDown = (e: PointerEvent) => {
       if (buildPaused) return;
-      if (e.button !== 0 && e.button !== 2) return;
       if (isInteractive(e.target as Element)) return; // let the page handle it
+      if (e.pointerType === "touch") {
+        touchStart = { x: e.clientX, y: e.clientY };
+        touchScrolled = false;
+        return; // wait for the tap/scroll decision on release
+      }
+      if (e.button !== 0 && e.button !== 2) return;
       const erase = e.button === 2 || e.altKey;
       painting = erase ? "erase" : "place";
       const cell = cellOf(e.clientX, e.clientY);
@@ -102,6 +110,16 @@ export function BlockBuilder() {
       setHint(false);
     };
     const onMove = (e: PointerEvent) => {
+      if (e.pointerType === "touch") {
+        // any real movement = a scroll, not a tap → don't place
+        if (
+          touchStart &&
+          (Math.abs(e.clientX - touchStart.x) > 10 ||
+            Math.abs(e.clientY - touchStart.y) > 10)
+        )
+          touchScrolled = true;
+        return;
+      }
       const cell = cellOf(e.clientX, e.clientY);
       hover = cell;
       if (painting) {
@@ -110,7 +128,25 @@ export function BlockBuilder() {
         last = cell;
       }
     };
-    const onUp = () => {
+    const onUp = (e: PointerEvent) => {
+      if (e.pointerType === "touch") {
+        if (touchStart && !touchScrolled) {
+          painting = "place";
+          const cell = cellOf(touchStart.x, touchStart.y);
+          apply(cell.c, cell.r);
+          painting = null;
+          setHint(false);
+        }
+        touchStart = null;
+        return;
+      }
+      painting = null;
+      last = null;
+    };
+    const onCancel = () => {
+      // browser took over for a scroll — drop the pending tap, no block
+      touchStart = null;
+      touchScrolled = false;
       painting = null;
       last = null;
     };
@@ -204,6 +240,7 @@ export function BlockBuilder() {
     window.addEventListener("pointerdown", onDown);
     window.addEventListener("pointermove", onMove, { passive: true });
     window.addEventListener("pointerup", onUp);
+    window.addEventListener("pointercancel", onCancel);
     window.addEventListener("contextmenu", onContext);
     window.addEventListener("keydown", onKey);
     window.addEventListener("buildmode:change", onBuildMode);
@@ -215,6 +252,7 @@ export function BlockBuilder() {
       window.removeEventListener("pointerdown", onDown);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onCancel);
       window.removeEventListener("contextmenu", onContext);
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("buildmode:change", onBuildMode);
