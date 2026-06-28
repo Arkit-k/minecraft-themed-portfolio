@@ -8,7 +8,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        cream: "#EEE5D1",
+        cream: "#FFFFFF",
         charcoal: "#222222",
         graphite: "#3A3A38",
         gray: {

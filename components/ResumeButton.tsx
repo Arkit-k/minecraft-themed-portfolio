@@ -21,7 +21,7 @@ export function ResumeButton() {
     <a
       href={profile.resume}
       onClick={handleClick}
-      className="group inline-flex items-center gap-3 rounded-full border border-charcoal/25 px-7 py-3.5 text-sm tracking-tight text-charcoal transition-all duration-500 ease-calm hover:border-charcoal hover:bg-charcoal hover:text-cream"
+      className="group inline-flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-full border border-charcoal/20 px-6 py-2.5 text-sm tracking-tight text-charcoal shadow-sm transition-all duration-500 ease-calm hover:border-charcoal hover:bg-charcoal hover:text-cream"
     >
       View &amp; Download Résumé
       <ArrowUpRight

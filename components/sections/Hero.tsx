@@ -27,11 +27,22 @@ export function Hero() {
       id="top"
       className="relative mx-auto flex min-h-[100svh] w-full max-w-editorial flex-col justify-center px-6 pt-28 pb-20 sm:px-10 lg:px-16"
     >
+      {/* artwork backdrop — sits behind the profile block */}
+      <motion.div
+        aria-hidden
+        initial={reduce ? false : { opacity: 0 }}
+        animate={{ opacity: 0.5 }}
+        transition={{ duration: 1.8, ease: EASE, delay: 0.4 }}
+        className="pointer-events-none absolute left-1/2 top-1/2 z-0 w-[130%] max-w-[920px] -translate-x-1/2 -translate-y-1/2"
+      >
+        <ParticleHero className="aspect-[3/2] w-full" />
+      </motion.div>
+
       <motion.div
         initial={reduce ? false : { opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, ease: EASE }}
-        className="mx-auto flex w-full flex-col items-center text-center"
+        className="relative z-10 mx-auto flex w-full flex-col items-center text-center"
       >
         {/* avatar */}
         <div className="relative h-28 w-28 overflow-hidden rounded-full shadow-sm ring-1 ring-charcoal/10 sm:h-32 sm:w-32">
@@ -75,16 +86,6 @@ export function Hero() {
         <p className="mt-8 max-w-md text-pretty text-lg leading-relaxed text-gray-soft">
           {profile.philosophy}
         </p>
-
-        {/* artwork */}
-        <motion.div
-          initial={reduce ? false : { opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.6, ease: EASE, delay: 0.5 }}
-          className="mt-12 w-full"
-        >
-          <ParticleHero className="mx-auto aspect-[3/2] w-full max-w-[520px]" />
-        </motion.div>
       </motion.div>
 
       {/* Scroll cue */}

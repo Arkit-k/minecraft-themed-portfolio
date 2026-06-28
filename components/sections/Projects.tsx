@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, Github } from "lucide-react";
 import { SectionLabel } from "@/components/SectionLabel";
+import { TechIcon } from "@/components/TechIcon";
 import { projects } from "@/lib/content";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -76,10 +77,10 @@ export function Projects() {
                 <p className="max-w-xl text-pretty text-base leading-relaxed text-gray-soft lg:text-[17px]">
                   {p.description}
                 </p>
-                <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-1.5">
+                <ul className="mt-6 flex flex-wrap gap-2">
                   {p.tech.map((t) => (
-                    <li key={t} className="text-sm text-charcoal/55">
-                      {t}
+                    <li key={t}>
+                      <TechIcon name={t} />
                     </li>
                   ))}
                 </ul>

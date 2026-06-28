@@ -9,8 +9,8 @@ export default function manifest(): MetadataRoute.Manifest {
       "Full Stack Developer building SaaS platforms and distributed systems.",
     start_url: "/",
     display: "standalone",
-    background_color: "#EEE5D1",
-    theme_color: "#EEE5D1",
+    background_color: "#FFFFFF",
+    theme_color: "#FFFFFF",
     icons: [{ src: "/icon.svg", sizes: "any", type: "image/svg+xml" }],
   };
 }
