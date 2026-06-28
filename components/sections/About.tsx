@@ -10,7 +10,7 @@ export function About() {
     >
       <SectionLabel index="01">About</SectionLabel>
       <Reveal>
-        <p className="max-w-4xl text-balance font-serif text-[clamp(1.6rem,4vw,2.9rem)] leading-[1.25] tracking-tight text-charcoal">
+        <p className="max-w-4xl text-balance font-serif text-[clamp(1.5rem,3vw,2rem)] leading-[1.35] tracking-tight text-charcoal">
           {profile.about}
         </p>
       </Reveal>
