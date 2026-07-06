@@ -28,3 +28,5 @@ next-env.d.ts
 
 # local Build Mode world store
 .buildworld.json
+.buildprops.json
+.buildpresence.json

@@ -189,6 +189,15 @@ export function BuildMode({ onExit }: { onExit: () => void }) {
         if (et === TORCH) torches.add(ex, ey, ez);
     const fireflies = new Fireflies(scene, world);
     const campfires = new Campfires(scene);
+    // campfires are shared props, not blocks — track which ground cells already
+    // hold one so remote adds never double-place.
+    const campfireKeys = new Set<string>();
+    const spawnCampfire = (gx: number, gz: number) => {
+      const key = `${gx},${gz}`;
+      if (campfireKeys.has(key)) return;
+      campfireKeys.add(key);
+      campfires.add(gx + 0.5, world.surfaceY(gx, gz) + 1, gz + 0.5);
+    };
     const foliage = new Foliage(scene, world);
     const minimap = minimapRef.current ? new Minimap(minimapRef.current, world) : null;
     minimap?.setBig(bigMapRef.current);
@@ -457,7 +466,8 @@ export function BuildMode({ onExit }: { onExit: () => void }) {
         const fz = -Math.cos(player.yaw);
         const gx = Math.floor(player.pos.x + fx * 2);
         const gz = Math.floor(player.pos.z + fz * 2);
-        campfires.add(gx + 0.5, world.surfaceY(gx, gz) + 1, gz + 0.5);
+        spawnCampfire(gx, gz);
+        queueProp(gx, gz, 0); // share it so everyone sees the campfire
       }
       if (e.code === "KeyF") toggleMode();
       if (e.code === "KeyR" && modeRef.current === "fight") respawnEnemies();
@@ -619,55 +629,78 @@ export function BuildMode({ onExit }: { onExit: () => void }) {
 
     // ---- shared world backend (best-effort; falls back to local on failure) ----
     const pendingRemote: number[][] = [];
+    const pendingProps: number[][] = [];
     let remoteTimer = 0 as unknown as ReturnType<typeof setTimeout>;
     const flushRemote = () => {
-      if (!pendingRemote.length) return;
+      if (!pendingRemote.length && !pendingProps.length) return;
       const batch = pendingRemote.splice(0, pendingRemote.length);
+      const props = pendingProps.splice(0, pendingProps.length);
       fetch("/api/world", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ edits: batch }),
+        body: JSON.stringify({ edits: batch, props }),
       }).catch(() => {
         pendingRemote.unshift(...batch); // retry on next flush
+        pendingProps.unshift(...props);
       });
     };
     const scheduleRemote = () => {
       clearTimeout(remoteTimer);
-      remoteTimer = setTimeout(flushRemote, 900);
+      remoteTimer = setTimeout(flushRemote, 500);
     };
     const queueRemote = (x: number, y: number, z: number, t: number) => {
       pendingRemote.push([x, y, z, t]);
       scheduleRemote();
     };
+    const queueProp = (gx: number, gz: number, kind: number) => {
+      pendingProps.push([gx, 0, gz, kind]);
+      scheduleRemote();
+    };
+
+    // apply block edits from the server, keeping torch glow in sync
+    const applyRemoteEdits = (edits: number[][]) => {
+      if (!edits.length) return;
+      world.applyEdits(edits);
+      for (const [x, y, z, t] of edits) {
+        if (t === TORCH) torches.add(x, y, z);
+        else torches.remove(x, y, z); // a torch that was mined away
+      }
+      rebuildDirty();
+    };
+    // materialise shared props (campfires) that we don't already have
+    const applyRemoteProps = (props: number[][]) => {
+      for (const p of props) {
+        const [gx, , gz, kind] = p;
+        if (kind === 0) spawnCampfire(gx, gz);
+      }
+    };
+
     // load the shared world on enter
     fetch("/api/world")
       .then((r) => r.json())
       .then((d) => {
-        if (Array.isArray(d?.edits) && d.edits.length) {
-          world.applyEdits(d.edits);
-          rebuildDirty();
-        }
+        if (Array.isArray(d?.edits)) applyRemoteEdits(d.edits);
+        if (Array.isArray(d?.props)) applyRemoteProps(d.props);
       })
       .catch(() => {});
-    // periodically merge edits other players have made
+    // periodically merge whatever other players have done (near-live)
     const pollRemote = () => {
       fetch("/api/world")
         .then((r) => r.json())
         .then((d) => {
-          if (!Array.isArray(d?.edits)) return;
-          const changed: number[][] = [];
-          for (const e of d.edits) {
-            const [x, y, z, t] = e;
-            if (world.edits.get(`${x},${y},${z}`) !== t) changed.push(e);
+          if (Array.isArray(d?.edits)) {
+            const changed: number[][] = [];
+            for (const e of d.edits) {
+              const [x, y, z, t] = e;
+              if (world.edits.get(`${x},${y},${z}`) !== t) changed.push(e);
+            }
+            applyRemoteEdits(changed);
           }
-          if (changed.length) {
-            world.applyEdits(changed);
-            rebuildDirty();
-          }
+          if (Array.isArray(d?.props)) applyRemoteProps(d.props);
         })
         .catch(() => {});
     };
-    const pollTimer = setInterval(pollRemote, 6000);
+    const pollTimer = setInterval(pollRemote, 2500);
 
     // ---- live presence: broadcast my position, see everyone else ----
     const PID = getPlayerId();

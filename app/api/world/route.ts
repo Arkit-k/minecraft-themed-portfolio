@@ -1,12 +1,29 @@
 import { NextResponse } from "next/server";
-import { getEdits, addEdits, persistenceMode, type Edit } from "@/lib/worldStore";
+import {
+  getEdits,
+  addEdits,
+  getProps,
+  addProps,
+  persistenceMode,
+  type Edit,
+} from "@/lib/worldStore";
 
 export const runtime = "nodejs"; // needs fs for the local fallback
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const edits = await getEdits();
-  return NextResponse.json({ edits, mode: persistenceMode });
+  const [edits, props] = await Promise.all([getEdits(), getProps()]);
+  return NextResponse.json({ edits, props, mode: persistenceMode });
+}
+
+function clean(raw: unknown): Edit[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter(
+      (e): e is Edit =>
+        Array.isArray(e) && e.length === 4 && e.every((n) => Number.isFinite(n))
+    )
+    .slice(0, 4000); // cap a single batch
 }
 
 export async function POST(req: Request) {
@@ -16,16 +33,12 @@ export async function POST(req: Request) {
   } catch {
     return NextResponse.json({ ok: false, error: "bad json" }, { status: 400 });
   }
-  const raw = (body as { edits?: unknown })?.edits;
-  if (!Array.isArray(raw)) {
-    return NextResponse.json({ ok: false, error: "no edits" }, { status: 400 });
+  const b = body as { edits?: unknown; props?: unknown };
+  const edits = clean(b?.edits);
+  const props = clean(b?.props);
+  if (!edits.length && !props.length) {
+    return NextResponse.json({ ok: false, error: "nothing to add" }, { status: 400 });
   }
-  const clean: Edit[] = raw
-    .filter(
-      (e): e is Edit =>
-        Array.isArray(e) && e.length === 4 && e.every((n) => Number.isFinite(n))
-    )
-    .slice(0, 4000); // cap a single batch
-  const count = await addEdits(clean);
-  return NextResponse.json({ ok: true, count });
+  const [ec, pc] = await Promise.all([addEdits(edits), addProps(props)]);
+  return NextResponse.json({ ok: true, edits: ec, props: pc });
 }
