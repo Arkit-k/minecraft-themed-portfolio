@@ -64,7 +64,7 @@ export type Planet = {
   colored: boolean; // false → monochrome black-and-white blocks (home)
 };
 export const PLANETS: Planet[] = [
-  { name: "Terra", seed: 0, water: true, trees: true, civilization: true, surface: "normal", atmosphere: [1, 1, 1], weather: ["rain", "thunder", "snow"], colored: false }, // home: black & white
+  { name: "Terra", seed: 0, water: true, trees: true, civilization: true, surface: "normal", atmosphere: [1, 1, 1], weather: ["rain", "thunder", "snow"], colored: true }, // home: full natural colour
   { name: "Inferno", seed: 137, water: false, trees: false, civilization: false, surface: "sand", atmosphere: [1.0, 0.58, 0.3], weather: ["sandstorm"], colored: true }, // orange
   { name: "Oceanus", seed: 401, water: true, trees: true, civilization: false, surface: "normal", atmosphere: [0.55, 0.72, 1.0], weather: ["rain", "typhoon", "thunder"], colored: true }, // blue
   { name: "Luna", seed: 911, water: false, trees: false, civilization: false, surface: "stone", atmosphere: [1.0, 0.88, 0.62], weather: ["sandstorm"], colored: true }, // sandy

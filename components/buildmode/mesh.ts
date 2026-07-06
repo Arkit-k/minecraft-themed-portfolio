@@ -170,6 +170,22 @@ export function setColored(on: boolean) {
   COLORED = on;
 }
 
+/**
+ * Approximate on-screen colour of a block type — the grayscale atlas base
+ * multiplied by the block's natural colour and the current planet tint (only
+ * on coloured worlds). Used to tint the break-particle shards so a shattered
+ * block throws off debris that matches the world it came from.
+ */
+export function blockShardColor(type: number): [number, number, number] {
+  const g = 0.62; // atlas mid-gray base (#9a9a9a ≈ 0.6)
+  const nc = COLORED ? NATURAL[type] || WHITE : WHITE;
+  return [
+    Math.min(1, g * nc[0] * TINT[0]),
+    Math.min(1, g * nc[1] * TINT[1]),
+    Math.min(1, g * nc[2] * TINT[2]),
+  ];
+}
+
 type Buf = {
   pos: number[];
   nor: number[];

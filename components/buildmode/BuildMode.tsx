@@ -8,15 +8,17 @@ import {
 import { SpaceScene, PLANET_THEME } from "./space";
 import {
   buildChunkGeometry, createAtlasTexture, setSnowCover, setBlockTint, setColored,
+  blockShardColor,
 } from "./mesh";
 import { Player } from "./player";
 import { PlayerBody } from "./body";
 import { Weather, WeatherMode } from "./weather";
 import { Critters } from "./critters";
-import { Footprints, Splashes, TorchGlow, Fireflies, Campfires } from "./effects";
+import { Footprints, Splashes, TorchGlow, Fireflies, Campfires, BlockBreak } from "./effects";
 import { Foliage } from "./foliage";
 import { Minimap } from "./minimap";
 import { BotManager } from "./bots";
+import { RemotePlayers } from "./remote";
 import { createSky, createBillboard } from "./sky";
 
 const ENEMY_COUNT = 5;
@@ -40,6 +42,24 @@ function loadSave(): Save | null {
   }
 }
 
+// a stable id per browser so the same visitor is one player across reloads
+const PID_KEY = "buildmode.playerId";
+function getPlayerId(): string {
+  try {
+    let id = localStorage.getItem(PID_KEY);
+    if (!id) {
+      id =
+        typeof crypto !== "undefined" && crypto.randomUUID
+          ? crypto.randomUUID()
+          : `p_${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`;
+      localStorage.setItem(PID_KEY, id);
+    }
+    return id;
+  } catch {
+    return `p_${Math.random().toString(36).slice(2)}`;
+  }
+}
+
 export function BuildMode({ onExit }: { onExit: () => void }) {
   const mountRef = useRef<HTMLDivElement>(null);
   const [selected, setSelected] = useState(0);
@@ -58,6 +78,8 @@ export function BuildMode({ onExit }: { onExit: () => void }) {
   const [flight, setFlight] = useState<"play" | "boarding" | "ascending" | "space">("play");
   const [nearRocket, setNearRocket] = useState(false);
   const [arrival, setArrival] = useState<string | null>(null);
+  const [online, setOnline] = useState(0);
+  const [onlineLocs, setOnlineLocs] = useState<string[]>([]);
   const launchGoRef = useRef<() => void>(() => {});
   const pickDestRef = useRef<(i: number) => void>(() => {});
   const abortFlightRef = useRef<() => void>(() => {});
@@ -159,6 +181,8 @@ export function BuildMode({ onExit }: { onExit: () => void }) {
     const footprints = new Footprints(scene, world);
     const splashes = new Splashes(scene);
     const burns = new Splashes(scene, 0xffb060); // warm embers when burning blocks
+    const breaks = new BlockBreak(scene); // Minecraft-style shatter when mining
+    const remotePlayers = new RemotePlayers(scene); // other people in the world
     const torches = new TorchGlow(scene);
     if (save?.edits)
       for (const [ex, ey, ez, et] of save.edits)
@@ -178,6 +202,7 @@ export function BuildMode({ onExit }: { onExit: () => void }) {
     let fadeT = 0;
     let fadeTarget = 0;
     let atm: [number, number, number] = PLANETS[0].atmosphere; // sky/light tint
+    let currentPlanet = PLANETS[0].name; // which world we're on (for presence)
     let arrivalTimer = 0 as unknown as ReturnType<typeof setTimeout>;
 
     const enterBoarding = () => {
@@ -347,7 +372,7 @@ export function BuildMode({ onExit }: { onExit: () => void }) {
     const sky = createSky(scene);
     sky.setAtmosphere(atm[0], atm[1], atm[2]); // home atmosphere to start
     setBlockTint(atm[0], atm[1], atm[2]);
-    setColored(PLANETS[0].colored); // home (Terra) is black & white
+    setColored(PLANETS[0].colored); // home (Terra) now shows full natural colour
     const billboardSpots: [number, number][] = [
       [0, -13],
       [13, 4],
@@ -536,9 +561,18 @@ export function BuildMode({ onExit }: { onExit: () => void }) {
           if (t === TORCH) torches.add(r.place[0], r.place[1], r.place[2]);
         }
       } else {
+        const mined = world.get(r.hit[0], r.hit[1], r.hit[2]);
         world.set(r.hit[0], r.hit[1], r.hit[2], AIR);
         queueRemote(r.hit[0], r.hit[1], r.hit[2], AIR);
         torches.remove(r.hit[0], r.hit[1], r.hit[2]); // no-op if not a torch
+        if (mined !== AIR && mined !== WATER) {
+          breaks.burst(
+            r.hit[0] + 0.5,
+            r.hit[1] + 0.5,
+            r.hit[2] + 0.5,
+            blockShardColor(mined)
+          );
+        }
       }
       rebuildDirty();
       scheduleSave();
@@ -635,6 +669,52 @@ export function BuildMode({ onExit }: { onExit: () => void }) {
     };
     const pollTimer = setInterval(pollRemote, 6000);
 
+    // ---- live presence: broadcast my position, see everyone else ----
+    const PID = getPlayerId();
+    let heartbeatBusy = false;
+    const sendPresence = () => {
+      if (heartbeatBusy || phase !== "play") return; // only while walking a world
+      heartbeatBusy = true;
+      fetch("/api/presence", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          id: PID,
+          x: player.pos.x,
+          y: player.pos.y,
+          z: player.pos.z,
+          yaw: player.yaw,
+          planet: currentPlanet,
+        }),
+      })
+        .then((r) => r.json())
+        .then((d) => {
+          if (Array.isArray(d?.players)) {
+            remotePlayers.sync(d.players);
+            setOnline(d.players.length);
+            setOnlineLocs(remotePlayers.locations());
+          }
+        })
+        .catch(() => {})
+        .finally(() => {
+          heartbeatBusy = false;
+        });
+    };
+    sendPresence();
+    const presenceTimer = setInterval(sendPresence, 2200);
+    // tell the server we're leaving so our avatar drops immediately
+    const leavePresence = () => {
+      try {
+        const blob = new Blob([JSON.stringify({ leave: true, id: PID })], {
+          type: "application/json",
+        });
+        navigator.sendBeacon?.("/api/presence", blob);
+      } catch {
+        /* best effort */
+      }
+    };
+    window.addEventListener("pagehide", leavePresence);
+
     // ---- loop ----
     let raf = 0;
     // ---- weather schedule + ground accumulation ----
@@ -658,10 +738,12 @@ export function BuildMode({ onExit }: { onExit: () => void }) {
         for (const key of [...chunkMeshes.keys()]) dropMesh(chunkMeshes, key);
         for (const key of [...waterMeshes.keys()]) dropMesh(waterMeshes, key);
         world.reseed(planet);
+        currentPlanet = planet.name;
+        remotePlayers.clear(); // old-world avatars vanish; repopulate on next heartbeat
         atm = planet.atmosphere;
         sky.setAtmosphere(atm[0], atm[1], atm[2]);
         setBlockTint(atm[0], atm[1], atm[2]); // recolour the blocks for this world
-        setColored(planet.colored); // monochrome on home, colour on alien worlds
+        setColored(planet.colored); // every planet renders in its natural colour
         weatherPool = planet.weather;
         wClock = 0;
         setSnowCover(false);
@@ -839,6 +921,9 @@ export function BuildMode({ onExit }: { onExit: () => void }) {
         splashes.splashAt(player.pos.x, player.pos.y + 0.2, player.pos.z);
       wasInWater = nowWater;
       splashes.update(dt);
+      burns.update(dt);
+      breaks.update(dt); // animate mining debris
+      remotePlayers.update(dt); // smooth other players toward their latest position
       waterAtlas.offset.y -= dt * 0.3; // make the water flow
 
       if (modeRef.current === "fight") {
@@ -892,6 +977,9 @@ export function BuildMode({ onExit }: { onExit: () => void }) {
       clearTimeout(remoteTimer);
       flushRemote();
       clearInterval(pollTimer);
+      clearInterval(presenceTimer);
+      window.removeEventListener("pagehide", leavePresence);
+      leavePresence();
       if (document.pointerLockElement === canvas) document.exitPointerLock();
       canvas.removeEventListener("mousedown", onMouseDown);
       canvas.removeEventListener("contextmenu", onContext);
@@ -909,6 +997,8 @@ export function BuildMode({ onExit }: { onExit: () => void }) {
       footprints.dispose();
       splashes.dispose();
       burns.dispose();
+      breaks.dispose();
+      remotePlayers.dispose();
       torches.dispose();
       fireflies.dispose();
       campfires.dispose();
@@ -989,6 +1079,34 @@ export function BuildMode({ onExit }: { onExit: () => void }) {
           Left-click: {tool === "build" ? "Build" : "Mine"}
           <span className="ml-1 rounded border border-charcoal/25 px-1 text-[10px] text-gray-soft">E</span>
         </button>
+      )}
+
+      {/* live players — who else is in this world, and where from */}
+      {!error && flight === "play" && (
+        <div className="group absolute left-4 top-4 z-10 max-w-[220px] rounded-2xl border border-charcoal/25 bg-cream/80 px-3.5 py-1.5 text-xs text-charcoal backdrop-blur-md">
+          <div className="flex items-center gap-2">
+            <span
+              className={`inline-block h-2 w-2 rounded-full ${
+                online > 0 ? "bg-emerald-500" : "bg-charcoal/30"
+              }`}
+            />
+            <span className="tracking-tight">
+              {online > 0
+                ? `${online} ${online === 1 ? "other player" : "other players"} online`
+                : "You're the only one here"}
+            </span>
+          </div>
+          {onlineLocs.length > 0 && (
+            <ul className="mt-1 max-h-24 overflow-hidden text-[11px] leading-snug text-gray-soft">
+              {onlineLocs.slice(0, 5).map((l, i) => (
+                <li key={i} className="truncate">
+                  · {l}
+                </li>
+              ))}
+              {onlineLocs.length > 5 && <li>· +{onlineLocs.length - 5} more</li>}
+            </ul>
+          )}
+        </div>
       )}
 
       {/* combat HUD */}

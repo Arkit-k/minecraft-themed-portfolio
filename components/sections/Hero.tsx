@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
+import { Mail, Linkedin, Github, Twitter } from "lucide-react";
 import { profile } from "@/lib/content";
 
 const ParticleHero = dynamic(
@@ -13,10 +14,10 @@ const ParticleHero = dynamic(
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 const socials = [
-  { label: "Email", href: `mailto:${profile.email}` },
-  { label: "LinkedIn", href: profile.linkedin },
-  { label: "GitHub", href: profile.github },
-  { label: "Twitter", href: profile.twitter },
+  { label: "Email", href: `mailto:${profile.email}`, Icon: Mail },
+  { label: "LinkedIn", href: profile.linkedin, Icon: Linkedin },
+  { label: "GitHub", href: profile.github, Icon: Github },
+  { label: "Twitter", href: profile.twitter, Icon: Twitter },
 ];
 
 export function Hero() {
@@ -31,9 +32,9 @@ export function Hero() {
       <motion.div
         aria-hidden
         initial={reduce ? false : { opacity: 0 }}
-        animate={{ opacity: 0.5 }}
+        animate={{ opacity: 0.4 }}
         transition={{ duration: 1.8, ease: EASE, delay: 0.4 }}
-        className="pointer-events-none absolute left-1/2 top-1/2 z-0 w-full max-w-[920px] -translate-x-1/2 -translate-y-1/2 sm:w-[130%]"
+        className="pointer-events-none absolute left-1/2 top-1/2 z-0 w-full max-w-[920px] -translate-x-1/2 -translate-y-1/2 [mask-image:radial-gradient(ellipse_58%_54%_at_50%_46%,transparent_38%,black_82%)] [-webkit-mask-image:radial-gradient(ellipse_58%_54%_at_50%_46%,transparent_38%,black_82%)] sm:w-[130%]"
       >
         <ParticleHero className="aspect-[3/2] w-full" />
       </motion.div>
@@ -64,21 +65,21 @@ export function Hero() {
         {/* role */}
         <p className="mt-3 text-lg text-gray-soft sm:text-xl">{profile.role}</p>
 
-        {/* inline social links — Email / LinkedIn / GitHub / Twitter */}
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 text-sm text-gray-soft">
-          {socials.map((s, i) => (
-            <span key={s.label} className="flex items-center gap-2.5">
-              {i > 0 && <span className="text-charcoal/25">/</span>}
-              <a
-                href={s.href}
-                {...(s.href.startsWith("mailto")
-                  ? {}
-                  : { target: "_blank", rel: "noreferrer" })}
-                className="tracking-tight transition-colors duration-300 hover:text-charcoal"
-              >
-                {s.label}
-              </a>
-            </span>
+        {/* inline social icons — Email / LinkedIn / GitHub / Twitter */}
+        <div className="mt-5 flex items-center justify-center gap-4 text-gray-soft">
+          {socials.map((s) => (
+            <a
+              key={s.label}
+              href={s.href}
+              aria-label={s.label}
+              title={s.label}
+              {...(s.href.startsWith("mailto")
+                ? {}
+                : { target: "_blank", rel: "noreferrer" })}
+              className="transition-colors duration-300 hover:text-charcoal"
+            >
+              <s.Icon className="h-5 w-5" strokeWidth={1.6} />
+            </a>
           ))}
         </div>
 

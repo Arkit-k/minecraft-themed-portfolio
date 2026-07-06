@@ -103,6 +103,134 @@ export class Footprints {
   }
 }
 
+// ---------------- block break ----------------
+// A Minecraft-style shatter: when a block is mined it bursts into a spray of
+// little cubes in the block's own colour that fly outward, tumble, fall under
+// gravity and fade. Bursts are pooled (each is one InstancedMesh) so mining
+// rapidly never allocates.
+const BREAK_POOL = 8; // concurrent bursts
+const SHARDS = 16; // cubes per burst
+const BREAK_LIFE = 0.72; // seconds
+const BREAK_GRAV = 26;
+
+type Burst = {
+  mesh: THREE.InstancedMesh;
+  mat: THREE.MeshBasicMaterial;
+  pos: Float32Array; // SHARDS*3, world-space
+  vel: Float32Array; // SHARDS*3
+  rot: Float32Array; // SHARDS*3, euler
+  rotV: Float32Array; // SHARDS*3
+  size: Float32Array; // SHARDS
+  life: number;
+};
+
+export class BlockBreak {
+  private scene: THREE.Scene;
+  private pool: Burst[] = [];
+  private cursor = 0;
+  private geo = new THREE.BoxGeometry(1, 1, 1);
+  private dummy = new THREE.Object3D();
+
+  constructor(scene: THREE.Scene) {
+    this.scene = scene;
+    for (let i = 0; i < BREAK_POOL; i++) {
+      const mat = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0,
+      });
+      const mesh = new THREE.InstancedMesh(this.geo, mat, SHARDS);
+      mesh.frustumCulled = false;
+      mesh.visible = false;
+      this.scene.add(mesh);
+      this.pool.push({
+        mesh,
+        mat,
+        pos: new Float32Array(SHARDS * 3),
+        vel: new Float32Array(SHARDS * 3),
+        rot: new Float32Array(SHARDS * 3),
+        rotV: new Float32Array(SHARDS * 3),
+        size: new Float32Array(SHARDS),
+        life: 0,
+      });
+    }
+  }
+
+  /** shatter a block centred at (x,y,z) into coloured shards */
+  burst(x: number, y: number, z: number, color: [number, number, number]) {
+    const b = this.pool[this.cursor];
+    this.cursor = (this.cursor + 1) % BREAK_POOL;
+    b.mat.color.setRGB(color[0], color[1], color[2]);
+    for (let i = 0; i < SHARDS; i++) {
+      // start scattered within the block volume
+      b.pos[i * 3] = x + (Math.random() - 0.5) * 0.8;
+      b.pos[i * 3 + 1] = y + (Math.random() - 0.5) * 0.8;
+      b.pos[i * 3 + 2] = z + (Math.random() - 0.5) * 0.8;
+      // fling outward from the centre, with a lift
+      const a = Math.random() * Math.PI * 2;
+      const out = 1.5 + Math.random() * 3.5;
+      b.vel[i * 3] = Math.cos(a) * out;
+      b.vel[i * 3 + 1] = 2.5 + Math.random() * 4.5;
+      b.vel[i * 3 + 2] = Math.sin(a) * out;
+      b.rot[i * 3] = Math.random() * Math.PI;
+      b.rot[i * 3 + 1] = Math.random() * Math.PI;
+      b.rot[i * 3 + 2] = Math.random() * Math.PI;
+      b.rotV[i * 3] = (Math.random() - 0.5) * 10;
+      b.rotV[i * 3 + 1] = (Math.random() - 0.5) * 10;
+      b.rotV[i * 3 + 2] = (Math.random() - 0.5) * 10;
+      b.size[i] = 0.1 + Math.random() * 0.16;
+    }
+    b.life = BREAK_LIFE;
+    b.mat.opacity = 1;
+    b.mesh.visible = true;
+    this.writeMatrices(b, 1);
+  }
+
+  private writeMatrices(b: Burst, scale: number) {
+    for (let i = 0; i < SHARDS; i++) {
+      this.dummy.position.set(b.pos[i * 3], b.pos[i * 3 + 1], b.pos[i * 3 + 2]);
+      this.dummy.rotation.set(b.rot[i * 3], b.rot[i * 3 + 1], b.rot[i * 3 + 2]);
+      this.dummy.scale.setScalar(Math.max(0.001, b.size[i] * scale));
+      this.dummy.updateMatrix();
+      b.mesh.setMatrixAt(i, this.dummy.matrix);
+    }
+    b.mesh.instanceMatrix.needsUpdate = true;
+  }
+
+  update(dt: number) {
+    for (const b of this.pool) {
+      if (b.life <= 0) continue;
+      b.life -= dt;
+      if (b.life <= 0) {
+        b.mesh.visible = false;
+        continue;
+      }
+      const k = b.life / BREAK_LIFE; // 1 → 0
+      for (let i = 0; i < SHARDS; i++) {
+        b.vel[i * 3 + 1] -= BREAK_GRAV * dt;
+        b.pos[i * 3] += b.vel[i * 3] * dt;
+        b.pos[i * 3 + 1] += b.vel[i * 3 + 1] * dt;
+        b.pos[i * 3 + 2] += b.vel[i * 3 + 2] * dt;
+        b.rot[i * 3] += b.rotV[i * 3] * dt;
+        b.rot[i * 3 + 1] += b.rotV[i * 3 + 1] * dt;
+        b.rot[i * 3 + 2] += b.rotV[i * 3 + 2] * dt;
+      }
+      // shrink and fade over the back half of life
+      this.writeMatrices(b, 0.55 + 0.45 * k);
+      b.mat.opacity = Math.min(1, k * 1.6);
+    }
+  }
+
+  dispose() {
+    for (const b of this.pool) {
+      this.scene.remove(b.mesh);
+      b.mat.dispose();
+      b.mesh.dispose();
+    }
+    this.geo.dispose();
+  }
+}
+
 // ---------------- splashes ----------------
 const SPLASH_POOL = 5;
 const DROPS = 22;
