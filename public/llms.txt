@@ -10,18 +10,19 @@ Full Stack Developer specializing in SaaS platforms and distributed systems — 
 
 - Languages & frameworks: JavaScript, TypeScript, Python, HTML/CSS, React.js & Next.js, Node.js & Express.js, Bun.js & Hono.js, Django
 - Data & infra: PostgreSQL & MongoDB, Docker, AWS, Redis & Celery
-- Systems & AI: System Design, RAG Architecture, LLM Integration, Churn Mitigation, HRMS Infrastructure, Agile Sprints
+- Systems & AI: System Design, RAG Architecture, LLM Integration, Churn Mitigation, Enterprise Platforms, Agile Sprints
 
 ## Experience
 
-- Optiminastic — Full Stack Developer (Feb 2026 – Present, Remote): Built an enterprise internal HR Management Platform (recruitment workflows, candidate tracking, automated onboarding). Engineered a full-stack SaaS engine monitoring website visibility across multi-model AI search (ChatGPT, Perplexity, Gemini) with Shopify Remix Apps and WordPress Plugins. Analytics pipeline in Python/Django and Next.js with Celery and PostgreSQL.
-- Cinemate AI — Founding Engineer / Consultant (Sept 2025 – Jan 2026, Mumbai): Co-designed a filmmaking discovery platform. Built high-performance Next.js backend with SSR, optimized PostgreSQL schemas and connection pooling, and operational RAG pipelines using LangChain for document embeddings and real-time vector indexing.
+- Optiminastic — Full Stack Developer (Feb 2026 – Present, Remote): Built internal enterprise platforms that are under NDA. Engineered a full-stack SaaS engine monitoring website visibility across multi-model AI search (ChatGPT, Perplexity, Gemini) with Shopify Remix Apps and WordPress Plugins. Analytics pipeline in Python/Django and Next.js with Celery and PostgreSQL.
+- Stealth Startup — Founding Engineer / Consultant (Sept 2025 – Jan 2026, Mumbai): Co-designed a platform for a stealth-stage startup (under NDA). Built high-performance Next.js backend with SSR, optimized PostgreSQL schemas and connection pooling, and operational RAG pipelines using LangChain for document embeddings and real-time vector indexing.
 
 ## Projects
 
 - Shepherd — Production-readiness auditing tool that catches the failure modes AI code generators leave behind (missing auth, cost-bombs, outdated patterns), with deterministic security/architecture scans and Claude Code/MCP integration. https://github.com/Arkit-k/shepherd
 - WindbackAI — B2B retention platform that minimizes subscription churn and recovers failed-transaction revenue using autonomous AI win-back sequences; PII encryption, RBAC, Redis queues, Docker on Render.
-- BrowzyAI — Browser extension enhancing navigation with companion tools; JavaScript extension layers on Python systems via Gemini API with native NLU.
+- SignalorAI (Optiminastic) — AI visibility and GEO platform that scores, monitors, and improves how ChatGPT, Claude, Gemini, and Perplexity cite a brand; daily prompt tracking, 0–100 GEO scores, competitor share of voice, and Shopify/WordPress schema fixes. https://signalor.ai
+- Three stealth projects (under NDA) — two internal platforms at Optiminastic and one stealth-stage startup product. Names and details are withheld.
 - 100xdevs Ecosystem — Production framework across Next.js (TypeScript), PostgreSQL, Docker, AWS, and Web3/Solana.
 
 ## Education

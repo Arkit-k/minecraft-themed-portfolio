@@ -1,4 +1,5 @@
-// Single source of truth — extracted verbatim from the résumé. Do not invent.
+// Single source of truth — résumé content, plus product context taken from each project's own site. Do not invent.
+// Stealth projects are under NDA: never put their real names, logos, links, or product details here.
 
 export const profile = {
   name: "Arkit Karmokar",
@@ -14,6 +15,7 @@ export const profile = {
   linkedin: "https://linkedin.com/in/arkit",
   twitter: "https://x.com/arkit_k",
   resume: "/arkit-karmokar-resume.pdf",
+  introAudio: "/api/intro-audio", // streamed in chunks from private/audio/intro.m4a
 };
 
 export type Experience = {
@@ -31,15 +33,15 @@ export const experience: Experience[] = [
     period: "Feb 2026 — Present",
     location: "Remote",
     description:
-      "Built an enterprise internal HR Management Platform streamlining recruitment lifecycle workflows, candidate tracking, and automated onboarding pipelines. Engineered a full-stack SaaS engine monitoring website visibility across multi-model AI search landscapes — ChatGPT, Perplexity, and Gemini — with custom integration engines and webhook frameworks via Shopify Remix Apps and WordPress Plugins for native visibility auto-fixes on production. Architected the analytics pipeline in Python/Django and Next.js, leveraging Celery task brokers and PostgreSQL.",
+      "Built internal enterprise platforms that are currently under NDA. Engineered a full-stack SaaS engine monitoring website visibility across multi-model AI search landscapes — ChatGPT, Perplexity, and Gemini — with custom integration engines and webhook frameworks via Shopify Remix Apps and WordPress Plugins for native visibility auto-fixes on production. Architected the analytics pipeline in Python/Django and Next.js, leveraging Celery task brokers and PostgreSQL.",
   },
   {
-    company: "Cinemate AI",
+    company: "Stealth Startup",
     title: "Founding Engineer / Consultant",
     period: "Sept 2025 — Jan 2026",
-    location: "Andheri, Mumbai",
+    location: "Mumbai",
     description:
-      "Co-designed a high-growth filmmaking discovery platform for creator networks and modern media production pipelines. Built high-performance Next.js backend infrastructure with server-side rendering integrated with optimized PostgreSQL schemas, index models, and connection-pool topologies. Developed operational RAG pipelines using LangChain to generate document embeddings, manage real-time vector indexing, and supply semantic capabilities to the platform.",
+      "Co-designed a high-growth platform for a stealth-stage startup (under NDA). Built high-performance Next.js backend infrastructure with server-side rendering integrated with optimized PostgreSQL schemas, index models, and connection-pool topologies. Developed operational RAG pipelines using LangChain to generate document embeddings, manage real-time vector indexing, and supply semantic capabilities to the platform.",
   },
 ];
 
@@ -52,6 +54,10 @@ export type Project = {
   tech: string[];
   github?: string;
   demo?: string;
+  logo?: string; // path under /public, shown above the name
+  wordmark?: string; // text logo shown in place of the name, e.g. "Windback."
+  color?: string; // brand colour for the wordmark
+  stealth?: boolean; // under NDA: name and logo are shown blurred, never revealed
 };
 
 export const projects: Project[] = [
@@ -74,16 +80,52 @@ export const projects: Project[] = [
       "A specialized B2B retention platform that minimizes subscription churn and automatically recovers failed-transaction revenue. Built an intelligent dunning engine using autonomous AI models to generate personalized win-back sequences, and hardened the core cluster with PII encryption at rest, strict RBAC, and API token rate-limiting. Fully containerized with Docker, scaling asynchronous workers via Redis job queues on Render.",
     tech: ["Next.js", "AI Models", "Redis", "Docker", "RBAC", "Render"],
     github: "https://github.com/arkit-k",
+    wordmark: "Windback.",
+    color: "#0004E0",
   },
   {
-    name: "BrowzyAI",
-    role: "Open Source Maintainer",
-    year: "2025",
-    context: "Global Community",
+    name: "SignalorAI",
+    role: "Full Stack Developer",
+    year: "2026",
+    context: "Optiminastic",
     description:
-      "A downloadable browser extension that enhances day-to-day navigation with custom-tailored companion tools. Tied lightweight JavaScript extension layers into scalable Python background systems using direct Gemini API orchestration, implementing native Natural Language Understanding that accelerated task performance by 30%.",
-    tech: ["JavaScript", "Python", "Gemini API", "NLU"],
-    github: "https://github.com/arkit-k",
+      "An AI visibility and GEO platform that scores, monitors, and improves how ChatGPT, Claude, Gemini, and Perplexity cite a brand. Runs tracked prompts daily across every major AI engine, grades sites on six GEO pillars from 0 to 100, benchmarks competitors' share of voice, and ships schema fixes straight to production through Shopify and WordPress integrations.",
+    tech: ["Next.js", "Python", "Django", "PostgreSQL", "AI Models"],
+    demo: "https://signalor.ai",
+    logo: "/logos/signalor.svg",
+  },
+  {
+    name: "Stealth Project",
+    role: "Full Stack Developer",
+    year: "2026",
+    context: "Optiminastic",
+    description:
+      "An internal product built end-to-end at Optiminastic, currently in stealth. Product details are covered by an NDA until launch.",
+    tech: ["Under NDA"],
+    logo: "/logos/stealth-1.png",
+    stealth: true,
+  },
+  {
+    name: "Stealth Project",
+    role: "Full Stack Developer",
+    year: "2026",
+    context: "Optiminastic",
+    description:
+      "An enterprise platform currently in stealth, built across the full stack. Specifics are covered by an NDA.",
+    tech: ["Under NDA"],
+    logo: "/logos/stealth-2.png",
+    stealth: true,
+  },
+  {
+    name: "Stealth Project",
+    role: "Founding Engineer",
+    year: "2025",
+    context: "Stealth Startup",
+    description:
+      "A stealth-stage startup product. Built the Next.js and PostgreSQL backbone and the LangChain RAG pipelines behind its AI features; product details are under NDA.",
+    tech: ["Next.js", "PostgreSQL", "RAG", "AI Models"],
+    logo: "/logos/stealth-3.png",
+    stealth: true,
   },
   {
     name: "100xdevs Ecosystem",
@@ -126,7 +168,7 @@ export const skills = {
     "RAG Architecture",
     "LLM Integration",
     "Churn Mitigation",
-    "HRMS Infrastructure",
+    "Enterprise Platforms",
     "Agile Sprints",
   ],
 };

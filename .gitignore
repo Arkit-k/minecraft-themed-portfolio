@@ -26,6 +26,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# intro music — licensed track, streamed by /api/intro-audio; never commit (public repo)
+/private/audio/
+
+# original logos of stealth projects under NDA — only blurred copies are published
+/private/logos/
+
 # local Build Mode world store
 .buildworld.json
 .buildprops.json
