@@ -1,4 +1,6 @@
 import { Nav } from "@/components/Nav";
+import { PortfolioSwitch } from "@/components/PortfolioSwitch";
+import { Landing } from "@/components/sections/Landing";
 import { Hero } from "@/components/sections/Hero";
 import { About } from "@/components/sections/About";
 import { Experience } from "@/components/sections/Experience";
@@ -11,12 +13,20 @@ export default function Home() {
     <>
       <Nav />
       <main>
-        <Hero />
-        <About />
-        <Experience />
-        <Projects />
-        <Skills />
-        <Contact />
+        {/* one or the other, never both: the glance, or the whole portfolio */}
+        <PortfolioSwitch
+          landing={<Landing />}
+          full={
+            <>
+              <Hero />
+              <About />
+              <Experience />
+              <Projects />
+              <Skills />
+              <Contact />
+            </>
+          }
+        />
       </main>
     </>
   );
