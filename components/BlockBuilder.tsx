@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from "react";
 
 /**
  * Global Minecraft-style creative building — works anywhere on the page.
- *   • drag on empty space      → place beveled charcoal voxel blocks
+ *   • drag on empty space      → place beveled voxel blocks. Inside the hero
+ *     each block is a window onto the photo hidden behind the page, so mining
+ *     the hero chips the cream away and reveals the mountains underneath.
  *   • Alt-drag (or right-drag)  → mine blocks away
  *   • Esc / Delete             → clear everything
  * The overlay never blocks links, buttons, or inputs (clicks pass through to
@@ -13,6 +15,7 @@ import { useEffect, useRef, useState } from "react";
  */
 
 const CELL = 22;
+const HIDDEN_IMAGE = "/mountains.jpg"; // revealed block by block inside the hero
 
 type Block = { t: number }; // place-pop progress 0→1
 
@@ -35,12 +38,36 @@ export function BlockBuilder() {
     let sy = 0; // current vertical scroll offset
     let dpr = Math.min(window.devicePixelRatio || 1, 2);
 
+    // the picture hiding behind the hero, drawn only where blocks are placed
+    const img = new Image();
+    let imgReady = false;
+    img.onload = () => {
+      imgReady = true;
+    };
+    img.src = HIDDEN_IMAGE;
+
+    // hero rect in document coords; the image is cover-fitted to it
+    let heroTop = 0;
+    let heroH = 0;
+    const measureHero = () => {
+      const el = document.getElementById("top");
+      if (!el) {
+        heroH = 0;
+        return;
+      }
+      const r = el.getBoundingClientRect();
+      const top = r.top + (window.scrollY || 0);
+      heroTop = top;
+      heroH = r.height;
+    };
+
     const blocks = new Map<string, Block>();
     let painting: null | "place" | "erase" = null;
     let last: { c: number; r: number } | null = null;
     let hover: { c: number; r: number } | null = null;
     let gridA = 0;
     let raf = 0;
+    let frame = 0;
 
     const key = (c: number, r: number) => `${c}:${r}`;
 
@@ -53,6 +80,7 @@ export function BlockBuilder() {
       canvas.style.width = `${w}px`;
       canvas.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      measureHero();
     };
     resize();
 
@@ -163,6 +191,40 @@ export function BlockBuilder() {
       }
     };
 
+    // The hidden picture is drawn through the blocks: neighbouring blocks sample
+    // adjoining slices, so a dug-out area becomes one continuous window onto it
+    // (no bevels between them — only the outer edge of the hole stays blocky).
+    const drawRevealed = (
+      x: number,
+      y: number,
+      s: number,
+      docX: number,
+      docY: number,
+      a: number
+    ) => {
+      if (!imgReady || heroH <= 0) return false;
+      const rel = docY - heroTop;
+      if (rel + s < 0 || rel > heroH) return false; // outside the hero
+      const scale = Math.max(w / img.width, heroH / img.height);
+      const dw = img.width * scale;
+      const dh = img.height * scale;
+      const ox = (w - dw) / 2;
+      const oy = (heroH - dh) / 2;
+      const srcX = (docX - ox) / scale;
+      const srcY = (rel - oy) / scale;
+      const srcS = s / scale;
+      if (srcX + srcS < 0 || srcY + srcS < 0 || srcX > img.width || srcY > img.height)
+        return false;
+      ctx.save();
+      ctx.globalAlpha = a;
+      // round outwards so adjacent blocks meet with no hairline seam
+      const rx = Math.floor(x);
+      const ry = Math.floor(y);
+      ctx.drawImage(img, srcX, srcY, srcS, srcS, rx, ry, Math.ceil(x + s) - rx, Math.ceil(y + s) - ry);
+      ctx.restore();
+      return true;
+    };
+
     const drawBlock = (c: number, r: number, t: number) => {
       const s = CELL * (0.55 + 0.45 * t);
       const cx = c * CELL + CELL / 2 - sx;
@@ -171,6 +233,8 @@ export function BlockBuilder() {
       const y = cy - s / 2;
       const a = 0.9 * t;
       const bevel = Math.max(2, s * 0.16);
+      // inside the hero the block is a window onto the hidden picture; elsewhere charcoal
+      if (drawRevealed(x, y, s, cx + sx - s / 2, cy + sy - s / 2, a)) return;
       ctx.fillStyle = `rgba(46, 46, 44, ${a})`;
       ctx.fillRect(x, y, s, s);
       ctx.fillStyle = `rgba(124, 120, 112, ${a})`;
@@ -203,6 +267,7 @@ export function BlockBuilder() {
     const tick = () => {
       sx = window.scrollX || 0;
       sy = window.scrollY || 0;
+      if (frame++ % 30 === 0) measureHero();
       gridA += ((painting ? 1 : 0) - gridA) * 0.15;
       ctx.clearRect(0, 0, w, h);
       drawGrid();
@@ -271,7 +336,7 @@ export function BlockBuilder() {
           hint ? "opacity-50" : "opacity-0"
         }`}
       >
-        Drag to build · alt-drag to mine · esc clears
+        Drag to dig · alt-drag to undo · esc clears
       </span>
     </>
   );
