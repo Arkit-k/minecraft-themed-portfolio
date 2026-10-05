@@ -15,7 +15,10 @@ import { useEffect, useRef, useState } from "react";
  */
 
 const CELL = 22;
-const HIDDEN_IMAGE = "/mountains.jpg"; // revealed block by block inside the hero
+// the picture revealed block by block inside the hero — a portrait crop for
+// phone-shaped heroes, the wide one everywhere else
+const HIDDEN_IMAGE = "/mountains.jpg";
+const HIDDEN_IMAGE_TALL = "/mountains-mobile.jpg";
 
 type Block = { t: number }; // place-pop progress 0→1
 
@@ -41,10 +44,19 @@ export function BlockBuilder() {
     // the picture hiding behind the hero, drawn only where blocks are placed
     const img = new Image();
     let imgReady = false;
+    let imgSrc = "";
     img.onload = () => {
       imgReady = true;
     };
-    img.src = HIDDEN_IMAGE;
+
+    // swap to whichever crop suits the hero's shape (phones get the portrait one)
+    const pickPhoto = () => {
+      const want = heroH > 0 && w / heroH < 0.95 ? HIDDEN_IMAGE_TALL : HIDDEN_IMAGE;
+      if (want === imgSrc) return;
+      imgSrc = want;
+      imgReady = false;
+      img.src = want;
+    };
 
     // hero rect in document coords; the image is cover-fitted to it
     let heroTop = 0;
@@ -59,6 +71,7 @@ export function BlockBuilder() {
       const top = r.top + (window.scrollY || 0);
       heroTop = top;
       heroH = r.height;
+      pickPhoto();
     };
 
     const blocks = new Map<string, Block>();

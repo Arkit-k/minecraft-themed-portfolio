@@ -26,7 +26,7 @@ export function Hero() {
 
   return (
     <section
-      id="top"
+      id="intro"
       className="relative mx-auto flex min-h-[100svh] w-full max-w-editorial flex-col justify-center px-6 pt-28 pb-40 sm:px-10 lg:px-16"
     >
       {/* artwork backdrop — sits behind the profile block */}
@@ -109,6 +109,7 @@ export function Hero() {
           transition={{ duration: 2.4, ease: "easeInOut", repeat: Infinity }}
         />
       </motion.div>
+
     </section>
   );
 }

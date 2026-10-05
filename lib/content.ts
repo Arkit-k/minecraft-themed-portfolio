@@ -5,6 +5,10 @@ export const profile = {
   name: "Arkit Karmokar",
   role: "Full Stack Developer",
   philosophy: "I build software that feels effortless.",
+  // the landing screen: what I do, then a few lines about me
+  headline: "Full-stack developer building SaaS platforms & distributed systems",
+  brief:
+    "I work across the stack — product, API, data and infrastructure — on AI platforms, retention systems and internal tools. Lately: AI search visibility, churn recovery, and a production-readiness agent for AI-written code. Some of it I can't name yet.",
   roles: ["Developer", "Builder", "Designer", "AI Engineer"],
   about:
     "I'm a Full Stack Developer specializing in SaaS platforms and distributed systems. From advanced automation platforms that resolve direct business friction to high-throughput internal infrastructure, I focus on shipping high-impact tools that perform smoothly under load and adapt gracefully within modern enterprise ecosystems.",
@@ -58,6 +62,7 @@ export type Project = {
   wordmark?: string; // text logo shown in place of the name, e.g. "Windback."
   color?: string; // brand colour for the wordmark
   stealth?: boolean; // under NDA: name and logo are shown blurred, never revealed
+  hideOnLanding?: boolean; // kept out of the landing screen's row of work
 };
 
 export const projects: Project[] = [
@@ -70,6 +75,7 @@ export const projects: Project[] = [
       "A production-readiness auditing tool that catches the failure modes AI code generators leave behind — missing auth, client-only access control, cost-bombs, outdated patterns, and architectural drift. Runs deterministic security and architecture scans with live localhost probing, evaluates readiness at 1M-DAU scale, and instead of merging directly it hands detailed fix work-orders to Claude Code via MCP for human-reviewed implementation.",
     tech: ["TypeScript", "Node.js", "CLI", "MCP", "Claude Code", "Security"],
     github: "https://github.com/Arkit-k/shepherd",
+    logo: "/logos/shepherd.png",
   },
   {
     name: "WindbackAI",
@@ -136,6 +142,7 @@ export const projects: Project[] = [
       "Advanced production execution framework targeting Next.js (TypeScript), PostgreSQL, and Docker workflows, scalable AWS server clusters, and highly performant Web3 applications built across Blockchain and Solana environments.",
     tech: ["Next.js", "PostgreSQL", "Docker", "AWS", "Solana", "Web3"],
     github: "https://github.com/arkit-k",
+    hideOnLanding: true,
   },
 ];
 
