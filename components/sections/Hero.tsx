@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { Mail, Linkedin, Github, Twitter } from "lucide-react";
+import { AudioPill } from "@/components/AudioPill";
 import { profile } from "@/lib/content";
 
 const ParticleHero = dynamic(
@@ -26,7 +27,7 @@ export function Hero() {
   return (
     <section
       id="top"
-      className="relative mx-auto flex min-h-[100svh] w-full max-w-editorial flex-col justify-center px-6 pt-28 pb-20 sm:px-10 lg:px-16"
+      className="relative mx-auto flex min-h-[100svh] w-full max-w-editorial flex-col justify-center px-6 pt-28 pb-40 sm:px-10 lg:px-16"
     >
       {/* artwork backdrop — sits behind the profile block */}
       <motion.div
@@ -34,7 +35,7 @@ export function Hero() {
         initial={reduce ? false : { opacity: 0 }}
         animate={{ opacity: 0.4 }}
         transition={{ duration: 1.8, ease: EASE, delay: 0.4 }}
-        className="pointer-events-none absolute left-1/2 top-1/2 z-0 w-full max-w-[920px] -translate-x-1/2 -translate-y-1/2 [mask-image:radial-gradient(ellipse_58%_54%_at_50%_46%,transparent_38%,black_82%)] [-webkit-mask-image:radial-gradient(ellipse_58%_54%_at_50%_46%,transparent_38%,black_82%)] sm:w-[130%]"
+        className="pointer-events-none absolute left-1/2 top-[calc(50%-3rem)] z-0 w-full max-w-[920px] -translate-x-1/2 -translate-y-1/2 [mask-image:radial-gradient(ellipse_58%_54%_at_50%_46%,transparent_38%,black_82%)] [-webkit-mask-image:radial-gradient(ellipse_58%_54%_at_50%_46%,transparent_38%,black_82%)] sm:w-[130%]"
       >
         <ParticleHero className="aspect-[3/2] w-full" />
       </motion.div>
@@ -87,6 +88,11 @@ export function Hero() {
         <p className="mt-8 max-w-md text-pretty text-lg leading-relaxed text-gray-soft">
           {profile.philosophy}
         </p>
+
+        {/* intro music */}
+        <div className="mt-8 flex w-full justify-center">
+          <AudioPill src={profile.introAudio} label="intro music" />
+        </div>
       </motion.div>
 
       {/* Scroll cue */}
