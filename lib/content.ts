@@ -3,15 +3,15 @@
 
 export const profile = {
   name: "Arkit Karmokar",
-  role: "Full Stack Developer",
+  role: "AI Engineer",
   philosophy: "I build software that feels effortless.",
   // the landing screen: what I do, then a few lines about me
-  headline: "Full-stack developer building SaaS platforms & distributed systems",
+  headline: "AI engineer building production LLM systems — MCP servers, agents, RAG",
   brief:
     "I work across the stack — product, API, data and infrastructure — on AI platforms, retention systems and internal tools. Lately: AI search visibility, churn recovery, and a production-readiness agent for AI-written code. Some of it I can't name yet.",
   roles: ["Developer", "Builder", "Designer", "AI Engineer"],
   about:
-    "I'm a Full Stack Developer specializing in SaaS platforms and distributed systems. From advanced automation platforms that resolve direct business friction to high-throughput internal infrastructure, I focus on shipping high-impact tools that perform smoothly under load and adapt gracefully within modern enterprise ecosystems.",
+    "I'm an AI engineer who builds the parts of AI products that have to work in production: MCP servers, tool-calling agents with real retries and cost caps, and RAG pipelines with vector indexing. I've shipped a conversational CLI agent exposing deterministic code detectors as model-callable tools, a churn-recovery platform on a Go backend, and a SaaS engine tracking brand visibility across ChatGPT, Perplexity and Gemini. Most of the work is the unglamorous half — idempotent webhooks, token budgets, and the failure modes nobody writes blog posts about.",
   location: "Ulhasnagar, Maharashtra — India",
   email: "arkitkarmokar007@gmail.com",
   phone: "+91 7020623232",
