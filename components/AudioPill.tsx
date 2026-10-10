@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Pause, Play } from "lucide-react";
 
 // resting waveform (% heights) shown before the music starts — fixed so server and client match
@@ -22,59 +21,19 @@ const BASELINE_RATE = 0.08; // how quickly "recent loudness" adapts (~2.5s at th
 const WARMUP_TICKS = 12; // adapt faster at first so a quiet intro doesn't skew the baseline
 
 // equalizer bars shown in the floating player while music plays
-const EQ_BARS = [
-  { peaks: [0.35, 1, 0.5, 0.8, 0.35], duration: 0.9 },
-  { peaks: [0.8, 0.4, 1, 0.3, 0.8], duration: 1.1 },
-  { peaks: [0.5, 0.9, 0.3, 1, 0.5], duration: 0.8 },
-  { peaks: [0.9, 0.5, 0.7, 0.35, 0.9], duration: 1.0 },
-];
-
-function Equalizer({ animate }: { animate: boolean }) {
-  return (
-    <span aria-hidden className="flex h-5 items-end gap-[3px]">
-      {EQ_BARS.map((bar, i) => (
-        <motion.span
-          key={i}
-          className="block h-full w-[3px] origin-bottom rounded-full bg-current"
-          initial={{ scaleY: bar.peaks[0] }}
-          animate={{ scaleY: animate ? bar.peaks : bar.peaks[0] }}
-          transition={
-            animate ? { duration: bar.duration, repeat: Infinity, ease: "easeInOut" } : undefined
-          }
-        />
-      ))}
-    </span>
-  );
-}
-
 export function AudioPill({ src, label }: { src: string; label: string }) {
   const reduce = useReducedMotion();
   const audioRef = useRef<HTMLAudioElement>(null);
-  const anchorRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const barEls = useRef<(HTMLSpanElement | null)[]>([]);
   const bars = useRef<number[]>([...IDLE_BARS]);
   const analyser = useRef<{ node: AnalyserNode; data: Uint8Array<ArrayBuffer>; ctx: AudioContext } | null>(null);
   const [playing, setPlaying] = useState(false);
   const [failed, setFailed] = useState(false);
-  const [scrolledPast, setScrolledPast] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
   // an error can land before hydration attaches the handler
   useEffect(() => {
-    setMounted(true); // the floating player portals into document.body, client only
     if (audioRef.current?.error) setFailed(true);
-  }, []);
-
-  // show the floating player once the hero player has left through the top of the screen
-  useEffect(() => {
-    const el = anchorRef.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([entry]) => {
-      setScrolledPast(!entry.isIntersecting && entry.boundingClientRect.top < 0);
-    });
-    io.observe(el);
-    return () => io.disconnect();
   }, []);
 
   // scrolling waveform: every tick the oldest bar drops off the left and a new one,
@@ -164,10 +123,9 @@ export function AudioPill({ src, label }: { src: string; label: string }) {
   };
 
   const toggleLabel = playing ? `Pause ${label}` : `Play ${label}`;
-  const hidden = reduce ? { opacity: 0 } : { opacity: 0, scale: 0.5, y: 24 };
 
   return (
-    <div ref={anchorRef} className="flex h-14 w-full max-w-[22rem] items-center gap-3">
+    <div className="flex h-14 w-full max-w-[22rem] items-center gap-3">
       <button
         type="button"
         onClick={toggle}
@@ -215,34 +173,6 @@ export function AudioPill({ src, label }: { src: string; label: string }) {
         }}
       />
 
-      {/* floating mini player — z-40 so Build Mode hides it with the other overlays */}
-      {mounted &&
-        createPortal(
-          <AnimatePresence>
-            {scrolledPast && !failed && (
-              <motion.button
-                key="floating-player"
-                type="button"
-                onClick={toggle}
-                aria-label={toggleLabel}
-                initial={hidden}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={hidden}
-                transition={{ type: "spring", stiffness: 380, damping: 26 }}
-                whileHover={reduce ? undefined : { scale: 1.06 }}
-                whileTap={reduce ? undefined : { scale: 0.94 }}
-                className="fixed bottom-4 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-cream text-orange-500 shadow-[0_4px_24px_rgba(34,34,34,0.12)] sm:bottom-12 sm:right-6"
-              >
-                {playing ? (
-                  <Equalizer animate={!reduce} />
-                ) : (
-                  <Play className="ml-0.5 h-5 w-5 fill-current" strokeWidth={0} />
-                )}
-              </motion.button>
-            )}
-          </AnimatePresence>,
-          document.body
-        )}
     </div>
   );
 }

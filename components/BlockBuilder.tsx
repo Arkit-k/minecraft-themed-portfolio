@@ -345,7 +345,7 @@ export function BlockBuilder() {
         className="pointer-events-none fixed inset-0 z-0"
       />
       <span
-        className={`pointer-events-none fixed bottom-3 right-3 z-40 hidden select-none text-[10px] uppercase tracking-[0.22em] text-gray-soft transition-opacity duration-700 sm:block ${
+        className={`pointer-events-none fixed bottom-4 left-1/2 z-40 hidden -translate-x-1/2 select-none text-[10px] uppercase tracking-[0.22em] text-gray-soft transition-opacity duration-700 sm:block ${
           hint ? "opacity-50" : "opacity-0"
         }`}
       >

@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { Mail, Linkedin, Github, Twitter } from "lucide-react";
 import { AudioPill } from "@/components/AudioPill";
-import { profile } from "@/lib/content";
+import { profile, mailtoHref } from "@/lib/content";
 
 const ParticleHero = dynamic(
   () => import("@/components/ParticleHero").then((m) => m.ParticleHero),
@@ -15,7 +15,7 @@ const ParticleHero = dynamic(
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 const socials = [
-  { label: "Email", href: `mailto:${profile.email}`, Icon: Mail },
+  { label: "Email", href: mailtoHref, Icon: Mail },
   { label: "LinkedIn", href: profile.linkedin, Icon: Linkedin },
   { label: "GitHub", href: profile.github, Icon: Github },
   { label: "Twitter", href: profile.twitter, Icon: Twitter },

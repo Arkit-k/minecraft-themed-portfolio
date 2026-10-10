@@ -5,6 +5,7 @@ import { ScratchCursor } from "@/components/ScratchCursor";
 import { BlockBuilder } from "@/components/BlockBuilder";
 import { AmbientCreatures } from "@/components/AmbientCreatures";
 import { BuildModeLauncher } from "@/components/BuildModeLauncher";
+import { EmailPill } from "@/components/EmailPill";
 import { StructuredData } from "@/components/StructuredData";
 import { SITE_URL, SITE_NAME } from "@/lib/site";
 
@@ -125,6 +126,7 @@ export default function RootLayout({
         </div>
         <BlockBuilder />
         <BuildModeLauncher />
+        <EmailPill />
         <div className="grain" aria-hidden="true" />
         <ScratchCursor />
       </body>

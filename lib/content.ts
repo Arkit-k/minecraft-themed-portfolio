@@ -27,6 +27,33 @@ export const profile = {
   introAudio: "/api/intro-audio", // streamed in chunks from private/audio/intro.m4a
 };
 
+/**
+ * A mailto that arrives already scoped. Most cold enquiries say "hi can you
+ * help", which costs three rounds before it's quotable — these four prompts
+ * collect what's needed to price the job in the first message.
+ */
+export const mailtoHref = (() => {
+  const subject = "Project enquiry — arkit.live";
+  const body = [
+    "Hi Arkit,",
+    "",
+    "What I need:",
+    "",
+    "What already exists (repo, stack, links):",
+    "",
+    "Timeline:",
+    "",
+    "Budget:",
+    "",
+    "",
+    "Thanks,",
+    "",
+  ].join("\n");
+  return `mailto:${profile.email}?subject=${encodeURIComponent(
+    subject,
+  )}&body=${encodeURIComponent(body)}`;
+})();
+
 export type Experience = {
   company: string;
   title: string;
