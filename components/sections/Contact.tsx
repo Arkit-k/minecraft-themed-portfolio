@@ -1,9 +1,9 @@
 import { Reveal } from "@/components/Reveal";
 import { ResumeButton } from "@/components/ResumeButton";
-import { profile } from "@/lib/content";
+import { profile, mailtoHref } from "@/lib/content";
 
 const links = [
-  { label: "Email", href: `mailto:${profile.email}`, display: profile.email },
+  { label: "Email", href: mailtoHref, display: profile.email },
   { label: "GitHub", href: profile.github, display: "github.com/arkit-k" },
   { label: "LinkedIn", href: profile.linkedin, display: "linkedin.com/in/arkit" },
   { label: "Twitter", href: profile.twitter, display: "@arkit_k" },

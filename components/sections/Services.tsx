@@ -4,7 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, Check } from "lucide-react";
 import { SectionLabel } from "@/components/SectionLabel";
 import { Reveal } from "@/components/Reveal";
-import { serviceGroups, profile } from "@/lib/content";
+import { serviceGroups, profile, mailtoHref } from "@/lib/content";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -107,7 +107,7 @@ export function Services() {
       <Reveal>
         <div className="mt-14 flex flex-wrap items-center gap-x-6 gap-y-3">
           <a
-            href={`mailto:${profile.email}`}
+            href={mailtoHref}
             className="inline-flex items-center gap-1.5 font-serif text-xl tracking-tight text-charcoal transition-colors duration-300 hover:text-graphite sm:text-2xl"
           >
             {profile.email}
