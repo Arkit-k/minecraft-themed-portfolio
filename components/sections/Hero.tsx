@@ -63,8 +63,8 @@ export function Hero() {
           Arkit <span className="italic text-graphite">Karmokar</span>
         </h1>
 
-        {/* role */}
-        <p className="mt-3 text-lg text-gray-soft sm:text-xl">{profile.role}</p>
+        {/* how he'd say it himself — not the jobTitle, which lives in the schema */}
+        <p className="mt-3 text-lg text-gray-soft sm:text-xl">{profile.heroLabel}</p>
 
         {/* inline social icons — Email / LinkedIn / GitHub / Twitter */}
         <div className="mt-5 flex items-center justify-center gap-4 text-gray-soft">

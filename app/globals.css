@@ -99,6 +99,29 @@
   }
 }
 
+/* ---- Loading screen: the inked figure swaying on its line ---- */
+@keyframes sway {
+  0%, 100% { transform: rotate(-7deg); }
+  50% { transform: rotate(7deg); }
+}
+.sway {
+  transform-origin: 50% 0;
+  animation: sway 2.2s ease-in-out infinite;
+}
+
+/* Failsafe: the overlay is server-rendered, so if JavaScript is slow to start
+   (or never does), CSS alone clears it instead of trapping the visitor. */
+@keyframes loading-bail {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+.loading-bail {
+  animation: loading-bail 0.6s var(--ease-calm, ease) 3.5s forwards;
+  pointer-events: none;
+}
+
 /* ---- Scratch / mine cursor ---- */
 .scratch-layer {
   position: fixed;
@@ -139,6 +162,12 @@
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  .sway {
+    animation: none;
+  }
+  .loading-bail {
+    animation-delay: 0.8s;
   }
   .grain {
     animation: none;
