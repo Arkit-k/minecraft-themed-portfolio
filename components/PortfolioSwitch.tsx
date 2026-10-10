@@ -3,7 +3,7 @@
 import { useEffect, type ReactNode } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronUp } from "lucide-react";
-import { setRevealed, useRevealed } from "@/lib/reveal-state";
+import { revealWithSwing, setRevealed, useRevealed } from "@/lib/reveal-state";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -38,14 +38,14 @@ export function PortfolioSwitch({ landing, full }: { landing: ReactNode; full: R
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.6, ease: EASE }}
+          transition={{ duration: 0.22, ease: EASE }}
         >
           {full}
           {/* back to the one-screen version */}
           <div className="flex justify-center px-6 pb-16">
             <button
               type="button"
-              onClick={() => setRevealed(false)}
+              onClick={() => revealWithSwing(false)}
               className="inline-flex items-center gap-2 rounded-full border border-hairline bg-cream/85 px-5 py-2.5 text-[11px] uppercase tracking-[0.22em] text-charcoal/80 transition-colors hover:border-charcoal hover:text-charcoal"
             >
               <ChevronUp className="h-3.5 w-3.5" strokeWidth={1.6} />
@@ -59,7 +59,7 @@ export function PortfolioSwitch({ landing, full }: { landing: ReactNode; full: R
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5, ease: EASE }}
+          transition={{ duration: 0.22, ease: EASE }}
         >
           {landing}
         </motion.div>

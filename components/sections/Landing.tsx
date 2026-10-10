@@ -4,7 +4,7 @@ import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { profile, projects } from "@/lib/content";
-import { setRevealed } from "@/lib/reveal-state";
+import { revealWithSwing } from "@/lib/reveal-state";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -96,7 +96,7 @@ export function Landing() {
       {/* the only way in: no scrolling on this screen */}
       <motion.button
         type="button"
-        onClick={() => setRevealed(true)}
+        onClick={() => revealWithSwing(true, !reduce)}
         initial={reduce ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, ease: EASE, delay: reduce ? 0 : 0.5 }}

@@ -31,9 +31,9 @@ const inter = Inter({
   display: "swap",
 });
 
-const TITLE = "Arkit Karmokar — Full Stack Developer";
+const TITLE = "Arkit Karmokar — AI Engineer, MCP Servers & LLM Systems";
 const DESCRIPTION =
-  "Arkit Karmokar is a Full Stack Developer from India building SaaS platforms and distributed systems with Next.js, TypeScript, Python/Django and PostgreSQL — with deep work in AI/RAG systems, LLM integration and system design.";
+  "Arkit Karmokar is an AI engineer in Mumbai building production LLM systems — MCP servers, tool-calling agents, RAG pipelines, and the infrastructure underneath them.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -45,18 +45,19 @@ export const metadata: Metadata = {
   applicationName: SITE_NAME,
   keywords: [
     "Arkit Karmokar",
-    "Full Stack Developer",
     "AI Engineer",
-    "Software Engineer India",
-    "Next.js Developer",
+    "MCP server developer",
+    "Model Context Protocol",
+    "AI agent developer",
+    "LLM engineer India",
+    "tool calling agents",
+    "RAG pipelines",
+    "LangChain",
+    "AI engineer Mumbai",
+    "Next.js",
     "TypeScript",
+    "Go",
     "Python Django",
-    "PostgreSQL",
-    "RAG",
-    "LLM Integration",
-    "System Design",
-    "SaaS",
-    "Distributed Systems",
   ],
   authors: [{ name: "Arkit Karmokar", url: SITE_URL }],
   creator: "Arkit Karmokar",
