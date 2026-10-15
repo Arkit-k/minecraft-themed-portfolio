@@ -87,7 +87,7 @@ export const projects: Project[] = [
     year: "2026",
     context: "Open Source",
     description:
-      "A production-readiness auditing tool that catches the failure modes AI code generators leave behind — missing auth, client-only access control, cost-bombs, outdated patterns, and architectural drift. Runs deterministic security and architecture scans with live localhost probing, evaluates readiness at 1M-DAU scale, and instead of merging directly it hands detailed fix work-orders to Claude Code via MCP for human-reviewed implementation.",
+      "A production-readiness auditing tool that catches the failure modes AI code generators leave behind — missing auth, client-only access control, cost-bombs, outdated patterns, and architectural drift. Runs deterministic security and architecture scans with live localhost probing, evaluates readiness at 1M-DAU scale, and instead of merging directly it hands detailed fix work-orders to Claude Code via MCP for human-reviewed implementation. Now coordinates multiple Claude Code sessions on one shared board, so spawned agents can read each other's findings and hand off work instead of running blind.",
     tech: ["TypeScript", "Node.js", "CLI", "MCP", "Claude Code", "Security"],
     github: "https://github.com/Arkit-k/shepherd",
     logo: "/logos/shepherd.png",
