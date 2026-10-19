@@ -10,7 +10,7 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 
 /**
  * What someone can actually hire me for, in three tiers — scarcest first.
- * Everything else on this page is evidence; this is the part with a price on it.
+ * Everything else on this page is evidence; this is the part that's for sale.
  */
 export function Services() {
   const reduce = useReducedMotion();
@@ -24,8 +24,8 @@ export function Services() {
 
       <Reveal>
         <p className="mb-16 max-w-xl text-pretty text-base leading-relaxed text-gray-soft lg:text-[17px]">
-          Fixed scope, fixed price, no retainer. First engagement with a new client
-          is a fixed-price trial, so you can see the work before committing.
+          Fixed scope, no retainer. First engagement with a new client is a
+          small trial, so you can see the work before committing. Quote on request.
         </p>
       </Reveal>
 
@@ -88,12 +88,9 @@ export function Services() {
                     )}
                   </div>
 
-                  {/* price rail */}
+                  {/* turnaround rail */}
                   <div className="lg:min-w-[140px] lg:text-right">
-                    <p className="font-serif text-2xl tracking-tight text-charcoal sm:text-3xl">
-                      {s.price}
-                    </p>
-                    <p className="mt-1 text-xs uppercase tracking-[0.18em] text-gray-soft">
+                    <p className="text-xs uppercase tracking-[0.18em] text-gray-soft">
                       {s.turnaround}
                     </p>
                   </div>

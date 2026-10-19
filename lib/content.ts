@@ -166,7 +166,6 @@ export type Service = {
   name: string;
   outcome: string; // the one line that says what they actually get
   includes: string[];
-  price: string;
   turnaround: string;
   proof?: string; // the work that backs the claim — never a claim without one
 };
@@ -201,7 +200,6 @@ export const serviceGroups: ServiceGroup[] = [
           "Error handling that returns usable messages, not stack traces",
           "Deployed, documented, and working in your editor before handover",
         ],
-        price: "$400",
         turnaround: "1 week",
         proof: "Shepherd — an MCP server exposing deterministic code detectors as model-callable tools",
       },
@@ -214,7 +212,6 @@ export const serviceGroups: ServiceGroup[] = [
           "Token budgets and model routing, so one bad input can't bill you $400",
           "Tracing, so when it misbehaves you can see which step did it",
         ],
-        price: "from $500",
         turnaround: "1–2 weeks",
         proof: "Shepherd's agent CLI, and a 9-strategy LLM recovery engine on OpenRouter",
       },
@@ -228,7 +225,6 @@ export const serviceGroups: ServiceGroup[] = [
           "Retrieval tuning so answers cite the passage that actually matters",
           "Evaluation, so you can tell whether a change helped or hurt",
         ],
-        price: "from $550",
         turnaround: "1–2 weeks",
         proof: "LangChain RAG pipelines — embeddings, real-time vector indexing, semantic retrieval",
       },
@@ -242,7 +238,6 @@ export const serviceGroups: ServiceGroup[] = [
           "Escalation to a human with full conversation context",
           "Analytics on what people actually ask",
         ],
-        price: "from $350",
         turnaround: "1 week",
       },
     ],
@@ -263,7 +258,6 @@ export const serviceGroups: ServiceGroup[] = [
           "Model routing — cheap model for the easy 80%, strong model for the rest",
           "Hard spend caps and per-feature attribution",
         ],
-        price: "$350",
         turnaround: "1 week",
         proof: "Built a cost-bomb detector because I kept finding these in production code",
       },
@@ -277,7 +271,6 @@ export const serviceGroups: ServiceGroup[] = [
           "Held-out evaluation against the base model, so the gain is measured",
           "Deployment and serving behind your existing API",
         ],
-        price: "$950",
         turnaround: "2 weeks",
       },
       {
@@ -290,7 +283,6 @@ export const serviceGroups: ServiceGroup[] = [
           "Scheduled jobs that survive restarts and don't double-fire",
           "Containerised and deployed",
         ],
-        price: "from $500",
         turnaround: "1 week",
         proof: "Signalor's Django/Celery/PostgreSQL pipeline and Windback's Redis job queues",
       },
@@ -312,7 +304,6 @@ export const serviceGroups: ServiceGroup[] = [
           "Builds that won't deploy, and hydration errors that only show in production",
           "A written list of what was wrong, so you don't ship it again",
         ],
-        price: "$100–250",
         turnaround: "2–5 days",
         proof: "Shepherd — a CLI that audits exactly these failure modes in AI-generated codebases",
       },
@@ -325,7 +316,6 @@ export const serviceGroups: ServiceGroup[] = [
           "Auth, payments and third-party integrations",
           "Docker, deploys, and the bits nobody wants to own",
         ],
-        price: "from $250",
         turnaround: "Scope-dependent",
         proof: "Windback's hexagonal Go backend and Signalor's Django pipeline",
       },
@@ -338,7 +328,6 @@ export const serviceGroups: ServiceGroup[] = [
           "Auth, token refresh and the failure cases nobody tests",
           "Logging, so you can see what happened when it misbehaves",
         ],
-        price: "$100–150",
         turnaround: "1–3 days",
         proof: "Shopify Remix app and WordPress plugin integrations shipping fixes to customer production",
       },
